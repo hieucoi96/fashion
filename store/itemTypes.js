@@ -1,0 +1,8 @@
+export const ADD_ITEM = "ADD_ITEM";
+export const DELETE_ITEM = "DELETE_ITEM";
+export const INCREASE_QUANTITY = "INCREASE_QUANTITY";
+export const DECREASE_QUANTITY = "DECREASE_QUANTITY";
+export const CHANGE_COLOR = "CHANGE_COLOR";
+export const CHANGE_SIZE = "CHANGE_SIZE";
+export const CHANGE_FAV = "CHANGE_FAV";
+export const CHANGE_INFO = "CHANGE_INFO";

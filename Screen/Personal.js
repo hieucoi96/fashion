@@ -35,10 +35,11 @@ const Personal = ({navigation}) => {
         <TouchableOpacity style={[styles.item, {flexDirection: 'row',
             borderTopWidth: item.title ==='Đơn hàng của tôi' ? 0.5 : 0}]}
                           key={index}
-                          onPress={() => handleItemClick(item.title)}>
+                          onPress={() => handleItemClick(item.title)}
+                          activeOpacity={1}>
             <View style={{flexDirection: 'row', flex: 1, alignItems: 'center',}}>
                 <Image
-                    style={{width: 24, height: 24, marginRight: 15}}
+                    style={{width: 24, height: 24, marginRight: 15, resizeMode: 'contain'}}
                     source={ item.src }
                 />
                 <Text style={[styles.text_normal, {paddingVertical: 20}]}>{item.title}</Text>

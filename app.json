@@ -1,10 +1,10 @@
 {
   "expo": {
-    "name": "fashion",
-    "slug": "fashion",
-    "version": "1.0.0",
+    "name": "fasion",
+    "slug": "fasion",
+    "version": "1.0.2",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
+    "icon": "./assets/icon_fasions_1.png",
     "splash": {
       "image": "./assets/splash.png",
       "resizeMode": "contain",
@@ -17,9 +17,13 @@
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true
+      "bundleIdentifier": "com.teklabsvn.fasion",
+      "buildNumber": "1.0.2",
+      "supportsTablet": false
     },
     "android": {
+      "package": "com.teklabsvn.fasion",
+      "versionCode": 1,
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#FFFFFF"

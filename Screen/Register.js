@@ -52,6 +52,7 @@ const styles = StyleSheet.create({
         backgroundColor: '#ffffff',
         alignItems: 'center',
         justifyContent: 'center',
+        paddingHorizontal: '4%',
     },
     brand: {
         fontFamily: 'Roboto',
@@ -76,12 +77,7 @@ const styles = StyleSheet.create({
         fontStyle: 'normal',
         fontWeight: 'normal',
         fontSize: 16,
-        lineHeight: 1.5,
-        width: 345,
-        paddingTop: 5,
-        paddingRight: 10,
-        paddingBottom: 5,
-        paddingLeft: 0,
+        width: '100%',
         color: '#000000',
     },
     inputSection: {
@@ -93,7 +89,7 @@ const styles = StyleSheet.create({
         borderColor: '#000000',
     },
     button_login: {
-        width: 345,
+        width: '100%',
         height: 42,
         backgroundColor: '#1C1C1E',
         paddingHorizontal: 20,

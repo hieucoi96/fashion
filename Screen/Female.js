@@ -46,7 +46,8 @@ const data = [
 
 const Item = ({ item, onPress, navigation, textColor }) => (
     <TouchableOpacity style={{margin: 2.5}}
-                      onPress={() => navigation.navigate('ListProduct', { name: item.name + ' nữ' })}>
+                      onPress={() => navigation.navigate('ListProduct', { name: item.name + ' nữ' })}
+                      activeOpacity={1}>
         <View style={styles.item}>
 
             <ImageBackground

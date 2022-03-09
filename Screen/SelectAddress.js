@@ -399,7 +399,7 @@ const addressList = [
 
 const SelectAddress = ({route, navigation}) => {
 
-    const {name, city, district} = route.params
+    const {name, city, district, lastScreen} = route.params
     const [data, setData] = useState([])
 
     useEffect(() =>{
@@ -425,7 +425,7 @@ const SelectAddress = ({route, navigation}) => {
                           {
                               ({item, index}) =>
                                   <TouchableOpacity style={styles.item}
-                                  onPress={()=> navigation.navigate('ChangeInfo', { name: item.name, type: name })}>
+                                  onPress={()=> navigation.navigate(lastScreen, { name: item.name, type: name })}>
                                       <Text styles={styles.text}>{item.name}</Text>
                                   </TouchableOpacity>
                           }

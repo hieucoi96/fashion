@@ -2,6 +2,7 @@ import React, {useState, useEffect} from 'react';
 import { StyleSheet, Text, View, FlatList, Image, TouchableOpacity, TextInput, ScrollView } from 'react-native';
 import { EvilIcons } from '@expo/vector-icons';
 import { showMessage, hideMessage } from "react-native-flash-message";
+import Ripple from "react-native-material-ripple";
 
 const ChangeInfo = ({route, navigation}) => {
 
@@ -80,16 +81,16 @@ const ChangeInfo = ({route, navigation}) => {
 
     function openSelectAddress(placeholder){
         if(placeholder === 'Tỉnh/Thành Phố'){
-            navigation.navigate('SelectAddress', { name: 'Tỉnh/Thành Phố' })
+            navigation.navigate('SelectAddress', { name: 'Tỉnh/Thành Phố', lastScreen: 'ChangeInfo' })
         }
         if(placeholder === "Quận/Huyện"){
             if(checkCitySelected()){
-                navigation.navigate('SelectAddress', { name: "Quận/Huyện", city: city })
+                navigation.navigate('SelectAddress', { name: "Quận/Huyện", city: city, lastScreen: 'ChangeInfo' })
             }
         }
         if(placeholder === "Phường/Xã"){
             if(checkCitySelected() && checkDistrictSelected()){
-                navigation.navigate('SelectAddress', { name: "Phường/Xã", district: district, city: city })
+                navigation.navigate('SelectAddress', { name: "Phường/Xã", district: district, city: city, lastScreen: 'ChangeInfo' })
             }
         }
     }
@@ -125,11 +126,18 @@ const ChangeInfo = ({route, navigation}) => {
                                placeholder = "Địa chỉ chi tiết "
                                placeholderTextColor = "#636366"/>
                 </View>
-                <TouchableOpacity style = {styles.button}
-                                  onPress = {() => {navigation.navigate("MainStack")}}
-                                  activeOpacity={0.8}>
+                {/*<TouchableOpacity style = {styles.button}*/}
+                {/*                  onPress = {() => {navigation.navigate("MainStack")}}*/}
+                {/*                  activeOpacity={0.8}>*/}
+                {/*    <Text style = {styles.text_button}>Cập nhật</Text>*/}
+                {/*</TouchableOpacity>*/}
+                <Ripple style = {styles.button}
+                        onPress = {() => {navigation.navigate("MainStack")}}
+                        rippleColor={'#ffffff'}
+                        rippleOpacity={0.4}
+                        rippleDuration={600}>
                     <Text style = {styles.text_button}>Cập nhật</Text>
-                </TouchableOpacity>
+                </Ripple>
             </View>
         </ScrollView>
     );

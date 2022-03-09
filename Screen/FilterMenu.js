@@ -10,7 +10,7 @@ import RailSelected from "../Component/RailSelected";
 import NumberFormat from "react-number-format";
 
 
-const Personal = ({navigation}) => {
+const FilterMenu = ({navigation}) => {
     const SECTIONS = [
         {
             title: 'Size',
@@ -88,7 +88,8 @@ const Personal = ({navigation}) => {
                                   {
                                       ({item, index}) =>
                                           <TouchableOpacity style={{flex:0.5, margin: 5, marginRight: 20, borderBottomWidth: 0.5, borderColor: '#DADADA'}}
-                                                            onPress={() => chooseSize(item)}>
+                                                            onPress={() => chooseSize(item)}
+                                                            activeOpacity={1}>
                                               <View style={styles.item}>
                                                   <View style={{flexDirection: 'row', marginRight: 20, flex: 1}}>
                                                       <Text style={styles.text_name}>{item}</Text>
@@ -116,7 +117,8 @@ const Personal = ({navigation}) => {
                                   {
                                       ({item, index}) =>
                                           <TouchableOpacity style={{flex:0.5, margin: 5, marginRight: 20, borderBottomWidth: 0.5, borderColor: '#DADADA'}}
-                                                            onPress = {() => chooseMaterial(item)}>
+                                                            onPress = {() => chooseMaterial(item)}
+                                                            activeOpacity={1}>
                                               <View style={styles.item}>
                                                   <View style={{flexDirection: 'row', marginRight: 20, flex: 1}}>
                                                       <Text style={styles.text_name}>{item}</Text>
@@ -142,7 +144,8 @@ const Personal = ({navigation}) => {
                                   {
                                       ({item, index}) =>
                                           <TouchableOpacity style={{flex:0.5, margin: 5, marginRight: 20, borderBottomWidth: 0.5, borderColor: '#DADADA'}}
-                                                            onPress={() => chooseColor(item.name)}>
+                                                            onPress={() => chooseColor(item.name)}
+                                                            activeOpacity={1}>
                                               <View style={styles.item}>
                                                   <View style={{flexDirection: 'row', marginRight: 20, flex: 1, alignItems: 'center'}}>
                                                       <View style={[styles.square, {backgroundColor: item.color, marginRight: 15}]}/>
@@ -166,22 +169,20 @@ const Personal = ({navigation}) => {
                 <View style={styles.content}>
                     <View style={{flexDirection: 'row', marginBottom: 20}}>
                         <NumberFormat  value={low}
-                                       className="foo"
                                        displayType={'text'}
                                        thousandSeparator={true}
                                        suffix={' đ'}
                                        renderText={(value, props) =>
-                                           <Text style={styles.text_old_price}{...props}>{value}</Text>
+                                           <Text {...props}>{value}</Text>
                                        }
                         />
                         <Text> - </Text>
                         <NumberFormat  value={high}
-                                       className="foo"
                                        displayType={'text'}
                                        thousandSeparator={true}
                                        suffix={' đ'}
                                        renderText={(value, props) =>
-                                           <Text style={styles.text_old_price}{...props}>{value}</Text>
+                                           <Text {...props}>{value}</Text>
                                        }
                         />
                     </View>
@@ -268,4 +269,4 @@ const styles = StyleSheet.create({
     }
 });
 
-export default Personal;
+export default FilterMenu;

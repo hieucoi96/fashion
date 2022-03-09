@@ -1,55 +1,44 @@
 import React, {useState} from 'react';
 import { StyleSheet, Text, View, FlatList, Image, TouchableOpacity, ScrollView, SafeAreaView } from 'react-native';
+import NumberFormat from "react-number-format";
+import {DATA_PRODUCT} from "../api/constants";
 
-const data_horizontal_list = [
-    {
-        id: "bd7acbea-c1b1-46c2-aed5-3ad53abb28ba",
-        name: "First Item",
-        price: "1.499.000đ",
-        src:require('../assets/img1.png')
-    },
-    {
-        id: "3ac68afc-c605-48d3-a4f8-fbd91aa97f63",
-        name: "Second Item",
-        price: "2.499.000đ",
-        src:require('../assets/img1.png')
-    },
-    {
-        id: "58694a0f-3da1-471f-bd96-145571e29d72",
-        name: "Third Item",
-        price: "899.000đ",
-        src:require('../assets/img3.jpg')
-    },
-];
+const data_horizontal_list = DATA_PRODUCT
 
 const data_vertical_list = [
     {
         id: "111111",
         name: "First Item",
-        src:require('../assets/img1.png')
+        src:require('../assets/img4.png')
     },
     {
         id: "342432432",
         name: "Second Item",
-        src:require('../assets/img1.png')
+        src:require('../assets/img5.png')
     },
     {
         id: "8657644643",
         name: "Third Item",
-        src:require('../assets/img3.jpg')
+        src:require('../assets/img4.png')
     },
 ];
 
 const ItemHorizontal = ({ item, onPress, backgroundColor, textColor }) => (
-    <TouchableOpacity onPress={onPress} style={[styles.itemHorizontal, backgroundColor]}>
+    <TouchableOpacity onPress={onPress} style={[styles.itemHorizontal, backgroundColor]} activeOpacity={1}>
         <Image style={styles.imgHorizontal} source={item.src}/>
         <Text style={[styles.nameHorizontal, textColor]}>{item.name}</Text>
-        <Text style={[styles.price, textColor]}>{item.price}</Text>
+        <NumberFormat  value={item.price}
+                       displayType={'text'}
+                       thousandSeparator={true}
+                       suffix={' đ'}
+                       renderText={(value, props) =>
+                           <Text style={styles.text_price}{...props}>{value}</Text>
+                       }/>
     </TouchableOpacity>
 );
 
 const ItemVertical = ({ item, onPress, backgroundColor, textColor }) => (
-    <TouchableOpacity onPress={onPress} style={[styles.itemVertical, backgroundColor]}>
+    <TouchableOpacity onPress={onPress} style={[styles.itemVertical, backgroundColor]} activeOpacity={1}>
         <Image style={styles.imgVertical} source={item.src}/>
         <Text style={[styles.nameVertical, textColor]}>{item.name}</Text>
     </TouchableOpacity>
@@ -59,6 +48,11 @@ const Home = ({navigation}) => {
 
     const [selectedId, setSelectedId] = useState(null);
 
+    function openProductDetails(item){
+        setSelectedId(item.id)
+        navigation.navigate("ProductDetails", {item: item})
+    }
+
     const renderItemHorizontal = ({ item }) => {
         const backgroundColor = item.id === selectedId ? "#ffffff" : "#ffffff";
         const color = item.id === selectedId ? 'black' : 'black';
@@ -66,7 +60,7 @@ const Home = ({navigation}) => {
         return (
             <ItemHorizontal
                 item={item}
-                onPress={() => setSelectedId(item.id)}
+                onPress={() => openProductDetails(item)}
                 backgroundColor={{ backgroundColor }}
                 textColor={{ color }}
             />
@@ -171,7 +165,14 @@ const styles = StyleSheet.create({
     imgVertical: {
         width: '100%',
         height: 186,
-    }
+    },
+    text_price: {
+        fontFamily: 'Open_Sans',
+        fontStyle: 'normal',
+        fontWeight: 'normal',
+        fontSize: 14,
+        lineHeight: 21,
+    },
 });
 
 export default Home;

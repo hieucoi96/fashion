@@ -1,8 +1,10 @@
-import React, {useState} from 'react';
-import { StyleSheet, Text, View, TouchableOpacity, TextInput } from 'react-native';
+import React, {useState, useRef} from 'react';
+import { StyleSheet, Text, View, TouchableOpacity, TextInput, Image } from 'react-native';
 import { FontAwesome } from '@expo/vector-icons';
 import { useFonts } from 'expo-font';
 import { AntDesign } from '@expo/vector-icons';
+import Ripple from 'react-native-material-ripple';
+import LottieView from "lottie-react-native";
 
 const Login = ({navigation}) => {
 
@@ -11,6 +13,7 @@ const Login = ({navigation}) => {
 
     const [loaded] = useFonts({
         Open_Sans: require('../assets/fonts/OpenSans-Regular.ttf'),
+        Roboto: require('../assets/fonts/Roboto-Regular.ttf'),
     });
 
     if (!loaded) {
@@ -49,26 +52,31 @@ const Login = ({navigation}) => {
                 </TouchableOpacity>
             </View>
 
-            <TouchableOpacity style = {styles.button_login} onPress = {() => {navigation.navigate("MainStack")}}>
+            <Ripple style = {styles.button_login} onPress = {() => {navigation.navigate("MainStack")}}
+                    rippleColor={'#ffffff'}
+                    rippleOpacity={0.4}
+                    rippleDuration={600}>
                 <Text style = {styles.text_login_text}>Đăng nhập</Text>
-            </TouchableOpacity>
+            </Ripple>
 
-            <Text style = {styles.text_question}>
-                Bạn chưa có tài khoản?
+            <View style = {styles.text_question}>
+                <Text>Bạn chưa có tài khoản? </Text>
                 <TouchableOpacity onPress = {() => {navigation.navigate("Register")}}>
                     <Text style = {styles.text_register_text}>Đăng ký</Text>
                 </TouchableOpacity>
-            </Text>
+            </View>
 
             <View style = {styles.button_container}>
-                <TouchableOpacity style = {styles.button_login_google}>
-                    <AntDesign name="google" size={23} color="black" />
+                <Ripple style = {styles.button_login_google}>
+                    {/*<AntDesign name="google" size={23} color="black" />*/}
+                    <Image style={{width: 23, height: 23, marginRight: 5}} source={require('../assets/icon_google.png')}/>
                     <Text> Google</Text>
-                </TouchableOpacity>
-                <TouchableOpacity style = {styles.button_login_facebook}>
-                    <AntDesign name="facebook-square" size={23} color="black" />
+                </Ripple>
+                <Ripple style = {styles.button_login_facebook}>
+                    {/*<AntDesign name="facebook-square" size={23} color="black" />*/}
+                    <Image style={{width: 23, height: 23, marginRight: 5}} source={require('../assets/icon_facebook.png')}/>
                     <Text> Facebook</Text>
-                </TouchableOpacity>
+                </Ripple>
             </View>
         </View>
     );
@@ -80,6 +88,7 @@ const styles = StyleSheet.create({
         backgroundColor: '#ffffff',
         alignItems: 'center',
         justifyContent: 'center',
+        paddingHorizontal: '4%',
     },
     brand: {
         fontFamily: 'Roboto',
@@ -102,6 +111,8 @@ const styles = StyleSheet.create({
         fontStyle: 'normal',
         fontWeight: 'normal',
         fontSize: 14,
+        flexDirection: 'row',
+        alignItems: 'center',
     },
     text_change_pass: {
         fontFamily: 'Open_Sans',
@@ -112,7 +123,6 @@ const styles = StyleSheet.create({
         marginRight: 14,
         marginTop: 10,
         color: '#636366',
-        // lineHeight: 1.5,
     },
     text_login_text: {
         color: "#FFFFFF",
@@ -124,21 +134,12 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         textDecorationLine: 'underline',
     },
-    input_container: {
-
-    },
     input:{
-        height: 30,
         fontFamily: 'Open_Sans',
         fontStyle: 'normal',
         fontWeight: 'normal',
         fontSize: 16,
-        lineHeight: 1.5,
-        width: 345,
-        paddingTop: 5,
-        paddingRight: 10,
-        paddingBottom: 5,
-        paddingLeft: 0,
+        width: '100%',
         color: '#000000',
     },
     inputSection: {
@@ -150,10 +151,9 @@ const styles = StyleSheet.create({
         borderColor: '#000000',
     },
     button_login: {
-        width: 345,
+        width: '100%',
         height: 42,
         backgroundColor: '#1C1C1E',
-        paddingHorizontal: 20,
         paddingVertical: 10,
         alignItems: 'center',
         justifyContent:'center',
@@ -161,7 +161,6 @@ const styles = StyleSheet.create({
     },
     button_container: {
         marginTop: 33,
-        marginHorizontal: 15,
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'center',
@@ -170,9 +169,9 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         borderWidth: 1,
         borderColor: '#000000',
-        width: 157,
+        width: '45%',
         height: 42,
-        marginRight: 31,
+        marginRight: '10%',
         alignItems: 'center',
         justifyContent: 'center',
     },
@@ -180,7 +179,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         borderWidth: 1,
         borderColor: '#000000',
-        width: 157,
+        width: '45%',
         height: 42,
         alignItems: 'center',
         justifyContent: 'center',
