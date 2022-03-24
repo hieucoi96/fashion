@@ -1,178 +1,217 @@
-import React, {useState} from 'react';
-import { StyleSheet, Text, View, FlatList, Image, TouchableOpacity, ScrollView, SafeAreaView } from 'react-native';
+import React, { useState, useEffect } from "react";
+import {
+  StyleSheet,
+  Text,
+  View,
+  FlatList,
+  Image,
+  TouchableOpacity,
+  ScrollView,
+  SafeAreaView,
+  ActivityIndicator,
+} from "react-native";
 import NumberFormat from "react-number-format";
-import {DATA_PRODUCT} from "../api/constants";
-
-const data_horizontal_list = DATA_PRODUCT
-
-const data_vertical_list = [
-    {
-        id: "111111",
-        name: "First Item",
-        src:require('../assets/img4.png')
-    },
-    {
-        id: "342432432",
-        name: "Second Item",
-        src:require('../assets/img5.png')
-    },
-    {
-        id: "8657644643",
-        name: "Third Item",
-        src:require('../assets/img4.png')
-    },
-];
+import axios from "axios";
+import { DATA_PRODUCT } from "../api/constants";
 
 const ItemHorizontal = ({ item, onPress, backgroundColor, textColor }) => (
-    <TouchableOpacity onPress={onPress} style={[styles.itemHorizontal, backgroundColor]} activeOpacity={1}>
-        <Image style={styles.imgHorizontal} source={item.src}/>
-        <Text style={[styles.nameHorizontal, textColor]}>{item.name}</Text>
-        <NumberFormat  value={item.price}
-                       displayType={'text'}
-                       thousandSeparator={true}
-                       suffix={' đ'}
-                       renderText={(value, props) =>
-                           <Text style={styles.text_price}{...props}>{value}</Text>
-                       }/>
-    </TouchableOpacity>
+  <TouchableOpacity
+    onPress={onPress}
+    style={[styles.itemHorizontal, backgroundColor]}
+    activeOpacity={1}
+  >
+    <Image style={styles.imgHorizontal} source={{ uri: item.src }} />
+    <Text style={[styles.nameHorizontal, textColor]}>{item.name}</Text>
+    <NumberFormat
+      value={item.price}
+      displayType={"text"}
+      thousandSeparator={true}
+      suffix={" đ"}
+      renderText={(value, props) => (
+        <Text style={styles.text_price} {...props}>
+          {value}
+        </Text>
+      )}
+    />
+  </TouchableOpacity>
 );
 
 const ItemVertical = ({ item, onPress, backgroundColor, textColor }) => (
-    <TouchableOpacity onPress={onPress} style={[styles.itemVertical, backgroundColor]} activeOpacity={1}>
-        <Image style={styles.imgVertical} source={item.src}/>
-        <Text style={[styles.nameVertical, textColor]}>{item.name}</Text>
-    </TouchableOpacity>
+  <TouchableOpacity
+    onPress={onPress}
+    style={[styles.itemVertical, backgroundColor]}
+    activeOpacity={1}
+  >
+    <Image style={styles.imgVertical} source={{ uri: item.src }} />
+    <Text style={[styles.nameVertical, textColor]}>{item.name}</Text>
+  </TouchableOpacity>
 );
 
-const Home = ({navigation}) => {
+const Home = ({ navigation, route }) => {
+  const { phone_number, token } = route.params ?? {};
+  const [horizontalList, setHorizontalList] = useState(null);
+  const [verticalList, setVerticalList] = useState(null);
+  const [loading, setLoading] = useState(false);
 
-    const [selectedId, setSelectedId] = useState(null);
+  const instance = axios.create({
+    baseURL: "https://hieuhmph12287-lab5.herokuapp.com/",
+    headers: { "x-access-token": token },
+  });
 
-    function openProductDetails(item){
-        setSelectedId(item.id)
-        navigation.navigate("ProductDetails", {item: item})
-    }
-
-    const renderItemHorizontal = ({ item }) => {
-        const backgroundColor = item.id === selectedId ? "#ffffff" : "#ffffff";
-        const color = item.id === selectedId ? 'black' : 'black';
-
-        return (
-            <ItemHorizontal
-                item={item}
-                onPress={() => openProductDetails(item)}
-                backgroundColor={{ backgroundColor }}
-                textColor={{ color }}
-            />
-        );
+  useEffect(() => {
+    setLoading(true);
+    const prod = () => {
+      return instance.get("/products/getProducts/newArrival");
     };
-
-    const renderItemVertical = ({ item }) => {
-        const backgroundColor = item.id === selectedId ? "#ffffff" : "#ffffff";
-        const color = item.id === selectedId ? 'black' : 'black';
-
-        return (
-            <ItemVertical
-                item={item}
-                onPress={() => setSelectedId(item.id)}
-                backgroundColor={{ backgroundColor }}
-                textColor={{ color }}
-            />
-        );
+    const collection = () => {
+      return instance.get("/collections/getCollections");
     };
+    Promise.all([prod(), collection()])
+      .then(function (results) {
+        setHorizontalList(results[0].data);
+        setVerticalList(results[1].data);
+      })
+      .catch(function (error) {
+        console.log(error);
+      })
+      .then(function () {
+        setLoading(false);
+      });
+  }, []);
+
+  function openProductDetails(item) {
+    navigation.navigate("ProductDetails", { item: item });
+  }
+
+  const openCollectionDetails = (collection_id) => {
+    navigation.navigate("Search", {
+      params: { collection_id, token },
+      screen: "ListProduct",
+    });
+  };
+
+  const renderItemHorizontal = ({ item }) => {
+    const backgroundColor = "#ffffff";
+    const color = "black";
 
     return (
-        <SafeAreaView style={styles.container}>
-
-            <View style = {{ alignItems: 'center', justifyContent: 'center', flex: 1}}>
-                <FlatList
-                    data={data_vertical_list}
-                    renderItem={renderItemVertical}
-                    keyExtractor={(item) => item.id}
-                    extraData={selectedId}
-                    showsVerticalScrollIndicator={false}
-                    ListHeaderComponent={
-                        <View style={{marginLeft: '4%', marginBottom:25,}}>
-                            <Text style = {styles.title}>New Arrival</Text>
-                            <FlatList
-                                horizontal
-                                data={data_horizontal_list}
-                                renderItem={renderItemHorizontal}
-                                keyExtractor={(item) => item.id}
-                                extraData={selectedId}
-                                showsHorizontalScrollIndicator={false}
-                            />
-                        </View>
-                    }
-                />
-            </View>
-        </SafeAreaView>
+      <ItemHorizontal
+        item={item}
+        onPress={() => openProductDetails(item)}
+        backgroundColor={{ backgroundColor }}
+        textColor={{ color }}
+      />
     );
-}
+  };
+
+  const renderItemVertical = ({ item }) => {
+    const backgroundColor = "#ffffff";
+    const color = "black";
+
+    return (
+      <ItemVertical
+        item={item}
+        onPress={() => {
+          openCollectionDetails(item.collection_id);
+        }}
+        backgroundColor={{ backgroundColor }}
+        textColor={{ color }}
+      />
+    );
+  };
+
+  return (
+    <SafeAreaView style={styles.container}>
+      <View style={{ alignItems: "center", justifyContent: "center", flex: 1 }}>
+        {loading ? (
+          <ActivityIndicator size="large" color="#000000" />
+        ) : (
+          <FlatList
+            data={verticalList}
+            renderItem={renderItemVertical}
+            keyExtractor={(item) => item.product_id}
+            showsVerticalScrollIndicator={false}
+            ListHeaderComponent={
+              <View style={{ marginLeft: "4%", marginBottom: 25 }}>
+                <Text style={styles.title}>New Arrival</Text>
+                <FlatList
+                  horizontal
+                  data={horizontalList}
+                  renderItem={renderItemHorizontal}
+                  keyExtractor={(item) => item.product_id}
+                  showsHorizontalScrollIndicator={false}
+                />
+              </View>
+            }
+          />
+        )}
+      </View>
+    </SafeAreaView>
+  );
+};
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: '#ffffff',
-
-    },
-    title: {
-        marginTop: 30,
-        fontFamily: 'Roboto',
-        fontStyle: 'normal',
-        fontWeight: 'bold',
-        fontSize: 16,
-        lineHeight: 19,
-    },
-    itemHorizontal: {
-        marginTop: 15,
-        marginRight: 15,
-        height: 341,
-        width: 235,
-    },
-    nameHorizontal: {
-        marginTop: 10,
-        fontFamily: 'Roboto',
-        fontStyle: 'normal',
-        fontWeight: 'bold',
-        fontSize: 14,
-    },
-    price: {
-        fontFamily: 'Roboto',
-        fontStyle: 'normal',
-        fontWeight: 'bold',
-        fontSize: 14,
-    },
-    imgHorizontal: {
-        width:235,
-        height:290,
-    },
-    itemVertical: {
-        width: '92%',
-        height: 215,
-        marginBottom: 20,
-        alignItems: 'center',
-        alignSelf: 'center',
-    },
-    nameVertical: {
-        marginTop: 10,
-        fontFamily: 'Roboto',
-        fontStyle: 'normal',
-        fontWeight: 'bold',
-        fontSize: 16,
-        lineHeight: 19,
-    },
-    imgVertical: {
-        width: '100%',
-        height: 186,
-    },
-    text_price: {
-        fontFamily: 'Open_Sans',
-        fontStyle: 'normal',
-        fontWeight: 'normal',
-        fontSize: 14,
-        lineHeight: 21,
-    },
+  container: {
+    flex: 1,
+    backgroundColor: "#ffffff",
+  },
+  title: {
+    marginTop: 30,
+    fontFamily: "Roboto",
+    fontStyle: "normal",
+    fontWeight: "bold",
+    fontSize: 16,
+    lineHeight: 19,
+  },
+  itemHorizontal: {
+    marginTop: 15,
+    marginRight: 15,
+    height: 341,
+    width: 235,
+  },
+  nameHorizontal: {
+    marginTop: 10,
+    fontFamily: "Roboto",
+    fontStyle: "normal",
+    fontWeight: "bold",
+    fontSize: 14,
+  },
+  price: {
+    fontFamily: "Roboto",
+    fontStyle: "normal",
+    fontWeight: "bold",
+    fontSize: 14,
+  },
+  imgHorizontal: {
+    width: 235,
+    height: 290,
+  },
+  itemVertical: {
+    width: "92%",
+    height: 215,
+    marginBottom: 20,
+    alignItems: "center",
+    alignSelf: "center",
+  },
+  nameVertical: {
+    marginTop: 10,
+    fontFamily: "Roboto",
+    fontStyle: "normal",
+    fontWeight: "bold",
+    fontSize: 16,
+    lineHeight: 19,
+  },
+  imgVertical: {
+    width: "100%",
+    height: 186,
+  },
+  text_price: {
+    fontFamily: "Open_Sans",
+    fontStyle: "normal",
+    fontWeight: "normal",
+    fontSize: 14,
+    lineHeight: 21,
+  },
 });
 
 export default Home;

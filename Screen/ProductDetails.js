@@ -28,6 +28,7 @@ import { showMessage } from "react-native-flash-message";
 import { DATA_PRODUCT } from "../api/constants";
 import Ripple from "react-native-material-ripple";
 import LottieView from "lottie-react-native";
+import moment from "moment";
 
 const heartOutline = require("../assets/icon_heart_outline.png");
 const heartFull = require("../assets/icon_heart_full.png");
@@ -105,6 +106,7 @@ const Item = ({ item, addOrRemoveFav, favorite, onPress }) => {
 
 const ProductDetails = ({ route, navigation }) => {
   const { item } = route.params;
+  // console.log("Item data: ", item);
 
   const dispatch = useDispatch();
   const fav_product_list = useSelector((state) => state.favReducer.data);
@@ -136,6 +138,15 @@ const ProductDetails = ({ route, navigation }) => {
     color: item.variant[0].color,
   });
   const [activeSections, setActiveSections] = useState([]);
+  const [sections, setSections] = useState([
+    {
+      title: "Chi tiết sản phẩm",
+      content: item.product_detail
+        ? item.product_detail
+        : "Chưa có chi tiết sản phẩm",
+    },
+    { title: "Đánh giá", content: item.evaluate },
+  ]);
 
   const [parabolicY, setParabolicY] = useState(-9999);
   const [activeSlide, setActiveSlide] = useState(0);
@@ -213,6 +224,10 @@ const ProductDetails = ({ route, navigation }) => {
     </View>
   ));
 
+  const averageRate =
+    item.evaluate.reduce((total, next) => total + next.rate, 0) /
+    item.evaluate.length;
+
   const goToSlide = (index) => {
     carouselRef.current.snapToItem(index, true, true);
   };
@@ -221,7 +236,7 @@ const ProductDetails = ({ route, navigation }) => {
     return (
       <View style={styles.item}>
         <ParallaxImage
-          source={item.src}
+          source={{ uri: item.src }}
           containerStyle={styles.imageContainer}
           style={styles.image}
           parallaxFactor={0.4}
@@ -270,27 +285,35 @@ const ProductDetails = ({ route, navigation }) => {
     } else {
       return (
         <View>
-          <FlatList
-            style={{ marginBottom: 10 }}
-            data={section.content}
-            renderItem={({ item, index }) => (
-              <View style={{ marginVertical: 10 }}>
-                <View style={{ flexDirection: "row" }}>
-                  <Text style={styles.text_username}>{item.username}</Text>
-                  <Text style={styles.text_date}>{item.date}</Text>
+          {section.content.length > 0 ? (
+            <FlatList
+              style={{ marginBottom: 10 }}
+              data={section.content}
+              renderItem={({ item, index }) => (
+                <View style={{ marginVertical: 10 }}>
+                  <View style={{ flexDirection: "row" }}>
+                    <Text style={styles.text_username}>{item.name}</Text>
+                    <Text style={styles.text_date}>
+                      {moment(item.date_created).format("DD/MM/YYYY")}
+                    </Text>
+                  </View>
+                  <Rating
+                    style={{ marginTop: 3, alignSelf: "flex-start" }}
+                    imageSize={10}
+                    startingValue={item.rate}
+                    readonly={true}
+                  />
+                  <Text style={{ marginTop: 5 }}>{item.note}</Text>
                 </View>
-                <Rating
-                  style={{ marginTop: 3, alignSelf: "flex-start" }}
-                  imageSize={10}
-                  startingValue={5}
-                  readonly={true}
-                />
-                <Text style={{ marginTop: 5 }}>{item.comment}</Text>
-              </View>
-            )}
-            keyExtractor={(item) => item.username}
-            showsVerticalScrollIndicator={false}
-          />
+              )}
+              keyExtractor={(item) => item.evaluate_id}
+              showsVerticalScrollIndicator={false}
+            />
+          ) : (
+            <Text style={{ paddingBottom: 20 }}>
+              Sản phẩm chưa có đánh giá nào
+            </Text>
+          )}
         </View>
       );
     }
@@ -450,13 +473,18 @@ const ProductDetails = ({ route, navigation }) => {
             />
           </View>
         </View>
-        <View style={{ paddingHorizontal: "4%" }}>
-          <Rating
-            style={{ marginTop: 5, alignSelf: "flex-start" }}
-            imageSize={12}
-            startingValue={4}
-            readonly={true}
-          />
+        <View
+          style={{
+            paddingHorizontal: "4%",
+            flexDirection: "row",
+            alignItems: "center",
+            marginTop: 5,
+          }}
+        >
+          <Rating imageSize={12} startingValue={averageRate} readonly={true} />
+          <Text style={{ marginLeft: 3, fontSize: 10, color: "gray" }}>
+            {"(" + averageRate.toFixed(1) + "/5)"}
+          </Text>
         </View>
         <View
           style={{ flexDirection: "row", marginTop: 10, marginHorizontal: 15 }}
