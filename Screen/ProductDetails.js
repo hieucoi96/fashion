@@ -9,6 +9,7 @@ import {
   Dimensions,
   FlatList,
   Animated,
+  ActivityIndicator,
 } from "react-native";
 
 import Carousel, {
@@ -25,10 +26,10 @@ import { useDispatch, useSelector } from "react-redux";
 import { addItem, changeFav } from "../store/itemAction";
 import ShoppingCartIcon from "../Component/ShoppingCartIcon";
 import { showMessage } from "react-native-flash-message";
-import { DATA_PRODUCT } from "../api/constants";
 import Ripple from "react-native-material-ripple";
 import LottieView from "lottie-react-native";
 import moment from "moment";
+import axios from "axios";
 
 const heartOutline = require("../assets/icon_heart_outline.png");
 const heartFull = require("../assets/icon_heart_full.png");
@@ -36,80 +37,12 @@ const windowWidth = Dimensions.get("screen").width;
 const windowHeight = Dimensions.get("screen").height;
 const { width: screenWidth, height: screenHeight } = Dimensions.get("window");
 
-const Item = ({ item, addOrRemoveFav, favorite, onPress }) => {
-  const heartAnimation = useRef(null);
-  const isFirstRun = useRef(true);
-  useEffect(() => {
-    if (isFirstRun.current) {
-      if (favorite.indexOf(item) > -1) {
-        heartAnimation.current.play(12, 12);
-      } else {
-        heartAnimation.current.play(1, 1);
-      }
-      isFirstRun.current = false;
-    } else if (favorite.indexOf(item) > -1) {
-      heartAnimation.current.play(2, 12);
-    } else {
-      heartAnimation.current.play(1, 1);
-    }
-  }, [favorite]);
-  return (
-    <TouchableOpacity
-      style={{ marginRight: 5, marginBottom: 15, width: 170 }}
-      onPress={onPress}
-    >
-      <View>
-        <ImageBackground style={styles.image_fav} source={item.src}>
-          <TouchableOpacity onPress={addOrRemoveFav}>
-            <LottieView
-              ref={heartAnimation}
-              style={styles.iconFav_sub}
-              source={require("../assets/lotties/heart_animation_4.json")}
-              autoPlay={false}
-              loop={false}
-            />
-          </TouchableOpacity>
-        </ImageBackground>
-
-        <Text style={styles.text_sub_status}>{item.status}</Text>
-        <Text style={styles.text_sub_name} numberOfLines={1}>
-          {item.name}
-        </Text>
-
-        <NumberFormat
-          value={item.old_price}
-          displayType={"text"}
-          thousandSeparator={true}
-          suffix={" đ"}
-          renderText={(value, props) => (
-            <Text style={styles.text_sub_old_price} {...props}>
-              {value}
-            </Text>
-          )}
-        />
-
-        <NumberFormat
-          value={item.price}
-          displayType={"text"}
-          thousandSeparator={true}
-          suffix={" đ"}
-          renderText={(value, props) => (
-            <Text style={styles.text_sub_price} {...props}>
-              {value}
-            </Text>
-          )}
-        />
-      </View>
-    </TouchableOpacity>
-  );
-};
-
 const ProductDetails = ({ route, navigation }) => {
-  const { item } = route.params;
-  // console.log("Item data: ", item);
+  const { item, token } = route.params;
 
   const dispatch = useDispatch();
   const fav_product_list = useSelector((state) => state.favReducer.data);
+  console.log("Check1: ", fav_product_list);
 
   const scrollViewRef = useRef();
   const parabolic = useRef();
@@ -131,6 +64,7 @@ const ProductDetails = ({ route, navigation }) => {
     { label: "XL", value: "XL" },
     { label: "XXL", value: "XXL" },
   ]);
+  const [relatedProduct, setRelatedProduct] = useState(null);
 
   const [currentInfo, setCurrentInfo] = useState({
     price: item.variant[0].price,
@@ -148,8 +82,16 @@ const ProductDetails = ({ route, navigation }) => {
     { title: "Đánh giá", content: item.evaluate },
   ]);
 
+  const [loading, setLoading] = useState(false);
+
   const [parabolicY, setParabolicY] = useState(-9999);
   const [activeSlide, setActiveSlide] = useState(0);
+
+  const instance = axios.create({
+    baseURL: "https://hieuhmph12287-lab5.herokuapp.com/",
+    headers: { "x-access-token": token },
+    timeout: 1000,
+  });
 
   useEffect(() => {
     navigation.setOptions({
@@ -173,15 +115,42 @@ const ProductDetails = ({ route, navigation }) => {
       headerTransparent: true,
     });
   }, [headerOpacity, navigation]);
+
   useEffect(() => {
     const sources = item.variant.reduce(function (result, item) {
       if (item.color === currentInfo.color) {
-        result.push({ label: item.size, value: item.v_id + "." + item.size });
+        result.push({
+          label: item.size,
+          value: item.variant_id + "." + item.size,
+        });
       }
       return result;
     }, []);
     setItems(sources);
   }, [currentInfo]);
+
+  useEffect(() => {
+    console.log("Item: ", item);
+    console.log("Check: ", item.collection_id + " - " + item.type);
+    setLoading(true);
+    instance
+      .post("/products/getRelatedProducts", {
+        collection_id: item.collection_id,
+        type: item.type,
+        product_id: item.product_id,
+      })
+      .then(function (response) {
+        console.log("Response related products:", response.data);
+        setRelatedProduct(response.data);
+      })
+      .catch(function (error) {
+        // Alert.alert("Thông báo", "Đăng nhập không thành công!");
+        console.log(error);
+      })
+      .then(function () {
+        setLoading(false);
+      });
+  }, [item]);
 
   React.useLayoutEffect(() => {
     navigation.setOptions({
@@ -250,7 +219,18 @@ const ProductDetails = ({ route, navigation }) => {
     return (
       <Item
         item={item}
-        addOrRemoveFav={() => dispatch(changeFav(item, item.id))}
+        addOrRemoveFav={() => {
+          instance
+            .get("/users/addFavorite/" + item.product_id)
+            .then(function (response) {
+              console.log("Response Fav:", response.data);
+            })
+            .catch(function (error) {
+              // Alert.alert("Thông báo", "Đăng nhập không thành công!");
+              console.log(error);
+            });
+          dispatch(changeFav(item, item.product_id));
+        }}
         favorite={fav_product_list}
         onPress={() => navigation.push("ProductDetails", { item: item })}
       />
@@ -357,7 +337,7 @@ const ProductDetails = ({ route, navigation }) => {
       addItem({
         key: Math.random().toString(36).substr(2, 9),
         v_id: v_id,
-        id: item.id,
+        id: item.product_id,
         name: item.name,
         src: currentInfo.src,
         status: item.status,
@@ -373,6 +353,92 @@ const ProductDetails = ({ route, navigation }) => {
       navigation.navigate("Cart");
     }
   }
+
+  const changeFavorite = () => {
+    instance
+      .get("/users/addFavorite/" + item.product_id)
+      .then(function (response) {
+        console.log("Response Fav:", response.data);
+      })
+      .catch(function (error) {
+        // Alert.alert("Thông báo", "Đăng nhập không thành công!");
+        console.log(error);
+      });
+    dispatch(changeFav(item, item.product_id));
+  };
+
+  const Item = ({ item, addOrRemoveFav, favorite, onPress }) => {
+    const fav = favorite.some((i) => i.product_id === item.product_id);
+    const animationProgress = useRef(new Animated.Value(fav ? 1 : 0)).current;
+
+    const changeFavorite = () => {
+      animationProgress.setValue(0.15);
+      if (!fav) {
+        Animated.timing(animationProgress, {
+          toValue: 1,
+          duration: 1000,
+          useNativeDriver: true,
+        }).start(({ finished }) => {
+          if (finished) {
+            addOrRemoveFav();
+          }
+        });
+      } else {
+        animationProgress.setValue(0);
+        addOrRemoveFav();
+      }
+    };
+
+    return (
+      <TouchableOpacity
+        style={{ marginRight: 5, marginBottom: 15, width: 170 }}
+        onPress={onPress}
+      >
+        <View>
+          <ImageBackground style={styles.image_fav} source={{ uri: item.src }}>
+            <TouchableOpacity onPress={changeFavorite}>
+              <LottieView
+                style={styles.iconFav_sub}
+                source={require("../assets/lotties/heart_animation_4.json")}
+                autoPlay={false}
+                loop={false}
+                progress={animationProgress}
+              />
+            </TouchableOpacity>
+          </ImageBackground>
+
+          <Text style={styles.text_sub_status}>{item.status}</Text>
+          <Text style={styles.text_sub_name} numberOfLines={1}>
+            {item.name}
+          </Text>
+
+          <NumberFormat
+            value={item.old_price}
+            displayType={"text"}
+            thousandSeparator={true}
+            suffix={" đ"}
+            renderText={(value, props) => (
+              <Text style={styles.text_sub_old_price} {...props}>
+                {value}
+              </Text>
+            )}
+          />
+
+          <NumberFormat
+            value={item.price}
+            displayType={"text"}
+            thousandSeparator={true}
+            suffix={" đ"}
+            renderText={(value, props) => (
+              <Text style={styles.text_sub_price} {...props}>
+                {value}
+              </Text>
+            )}
+          />
+        </View>
+      </TouchableOpacity>
+    );
+  };
 
   return (
     <Animated.ScrollView
@@ -426,7 +492,7 @@ const ProductDetails = ({ route, navigation }) => {
           />
           <TouchableOpacity
             style={{ position: "absolute", right: "4%", bottom: 15 }}
-            onPress={() => dispatch(changeFav(item, item.id))}
+            onPress={() => changeFavorite()}
           >
             <Image
               source={
@@ -481,10 +547,22 @@ const ProductDetails = ({ route, navigation }) => {
             marginTop: 5,
           }}
         >
-          <Rating imageSize={12} startingValue={averageRate} readonly={true} />
-          <Text style={{ marginLeft: 3, fontSize: 10, color: "gray" }}>
-            {"(" + averageRate.toFixed(1) + "/5)"}
-          </Text>
+          {averageRate ? (
+            <>
+              <Rating
+                imageSize={12}
+                startingValue={averageRate}
+                readonly={true}
+              />
+              <Text style={{ marginLeft: 3, fontSize: 10, color: "gray" }}>
+                {"(" + averageRate.toFixed(1) + "/5)"}
+              </Text>
+            </>
+          ) : (
+            <Text style={{ fontSize: 11, color: "gray" }}>
+              Chưa có đánh giá
+            </Text>
+          )}
         </View>
         <View
           style={{ flexDirection: "row", marginTop: 10, marginHorizontal: 15 }}
@@ -526,10 +604,6 @@ const ProductDetails = ({ route, navigation }) => {
           <Text style={styles.text_buy}>Mua Ngay</Text>
         </Ripple>
         <View
-          // onLayout={(event) => {
-          //     const {x, y, width, height} = event.nativeEvent.layout;
-          //     setDimensions({x: width, y: height})
-          // }}
           style={{
             marginHorizontal: "4%",
             marginVertical: 25,
@@ -552,13 +626,25 @@ const ProductDetails = ({ route, navigation }) => {
           <Text style={[styles.headerText, { fontSize: 16, marginBottom: 15 }]}>
             Có thể bạn muốn mua
           </Text>
-          <FlatList
-            horizontal
-            data={data}
-            renderItem={renderItem}
-            keyExtractor={(item) => item.id}
-            showsHorizontalScrollIndicator={false}
-          />
+          {loading ? (
+            <View
+              style={{
+                height: 280,
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              <ActivityIndicator size="large" color="#000000" />
+            </View>
+          ) : (
+            <FlatList
+              horizontal
+              data={relatedProduct}
+              renderItem={renderItem}
+              keyExtractor={(item) => item.product_id}
+              showsHorizontalScrollIndicator={false}
+            />
+          )}
         </View>
         <Parabolic
           ref={parabolic}
@@ -567,7 +653,7 @@ const ProductDetails = ({ route, navigation }) => {
             return (
               <View style={{ position: "absolute", zIndex: 10, elevation: 10 }}>
                 <Image
-                  source={currentInfo.src}
+                  source={{ uri: currentInfo.src }}
                   style={{ width: 35, height: 60, opacity: 0.8 }}
                 />
               </View>
@@ -809,52 +895,5 @@ const styles = StyleSheet.create({
     resizeMode: "contain",
   },
 });
-
-const data = DATA_PRODUCT;
-
-const sections = [
-  {
-    title: "Chi tiết sản phẩm",
-    content:
-      "- Áo sơ mi dài tay kiểu dáng Slim Fit ôm gọn gàng cơ thể và tôn dáng người mặc.\n" +
-      "\n" +
-      "- Thiết kế cơ bản với cổ đứng gọn gàng. Kết hợp tà lượn thời trang giúp áo dễ dàng kết hợp với " +
-      "nhiều loại trang phục khác nhau." +
-      "- Kết hợp sợi Polyspun giúp áo giữ phom dáng tốt, hạn chế nhăn co, dễ chăm sóc và bền màu sau " +
-      "thời gian dài sử dụng kết hợp chất liệu cotton hút ẩm, thấm mồ hôi dễ giặt ủi.",
-  },
-  {
-    title: "Đánh giá",
-    content: [
-      {
-        username: "HieuofHell",
-        date: "22/1/2020",
-        comment:
-          "Sản phẩm rất tọet vời. Tôi sẽ ủng hộ shop nhiều hơn" +
-          " nữa trong thời gian tới",
-      },
-      {
-        username: "Na Phan",
-        date: "30/5/2021",
-        comment: "Shop đóng gói cẩn thận, giao hàng nhanh, hàng y hình nha",
-      },
-      {
-        username: "kimminh7797",
-        date: "12/1/2021",
-        comment: "Giao hàng chất lượng shop đóng gói khá kĩ ",
-      },
-      {
-        username: "habeee96",
-        date: "09/4/2021",
-        comment: "Mới nhận, chưa biết dùng thế nào.",
-      },
-      {
-        username: "manhmyh",
-        date: "31/12/2020",
-        comment: "Chất lượng sản phẩm tuyệt vời, đóng gói sản phẩm tốt",
-      },
-    ],
-  },
-];
 
 export default ProductDetails;

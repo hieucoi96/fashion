@@ -478,59 +478,10 @@ export const DATA_PRODUCT = [
         ]
     },
 ];
-export const CART_PRODUCT = [{
-    key: "0.674572562354895",
-    id: "bd7acbea-c1b1-46c2-aed5-3ad53abb28ba",
-    v_id: "bd7acbea-c1b1-46c2-aed5-3ad53abb28ba2-2",
-    name: "Jack Wolfskin",
-    status: "New Arrival",
-    old_price: 1800000,
-    price: 1450000,
-    src:require('../assets/product_01_2.jpg'),
-    variant: [
-        {
-            v_id: "bd7acbea-c1b1-46c2-aed5-3ad53abb28ba1-1",
-            color: 'Dark Aqua', rgb: '#01bdc3', price: 1450000, src: require('../assets/product_01_1.jpg'),
-            size: 'L'
-        },
-        {
-            v_id: "bd7acbea-c1b1-46c2-aed5-3ad53abb28ba1-2",
-            color: 'Dark Aqua', rgb: '#01bdc3', price: 1450000, src: require('../assets/product_01_1.jpg'),
-            size: 'XL'
-        },
-        {
-            v_id: "bd7acbea-c1b1-46c2-aed5-3ad53abb28ba1-3",
-            color: 'Dark Aqua', rgb: '#01bdc3', price: 1450000, src: require('../assets/product_01_1.jpg'),
-            size: 'XXL'
-        },
-        {
-            v_id: "bd7acbea-c1b1-46c2-aed5-3ad53abb28ba2-1",
-            color: 'Black', rgb: '#000000', price: 1250000, src: require('../assets/product_01_2.jpg'),
-            size: 'L'
-        },
-        {
-            v_id: "bd7acbea-c1b1-46c2-aed5-3ad53abb28ba2-2",
-            color: 'Black', rgb: '#000000', price: 1250000, src: require('../assets/product_01_2.jpg'),
-            size: 'XL'
-        },
-        {
-            v_id: "bd7acbea-c1b1-46c2-aed5-3ad53abb28ba3-1",
-            color: 'Tulip Red', rgb: '#fc0459', price: 1550000, src: require('../assets/product_01_3.jpg'),
-            size: 'S'
-        },
-        {
-            v_id: "bd7acbea-c1b1-46c2-aed5-3ad53abb28ba3-2",
-            color: 'Tulip Red', rgb: '#fc0459', price: 1550000, src: require('../assets/product_01_3.jpg'),
-            size: 'M'
-        },
-    ],
-    color: 'Black',
-    size: 'L',
-    quantity: 1,
-},]
+export const CART_PRODUCT = []
 export const FAV_PRODUCT = [
     {
-        id: "3ac68afc-c605-48d3-a4f8-fbd91aa97f63c",
+        product_id: "3ac68afc-c605-48d3-a4f8-fbd91aa97f63c",
         v_id: "",
         name: "Lee Women's Wrinkle",
         status: "New Arrival",
@@ -616,7 +567,7 @@ export const FAV_PRODUCT = [
         ]
     },
     {
-        id: "58694a0f-3da1-471f-bd96-145571e29d72",
+        product_id: "58694a0f-3da1-471f-bd96-145571e29d72",
         v_id: "",
         name: "Gildan Men's Fleece Hooded",
         status: "New Arrival",

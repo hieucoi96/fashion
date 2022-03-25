@@ -35,7 +35,6 @@ const ListProduct = ({ route, navigation }) => {
       instance
         .get("products/getProducts/" + collection_id)
         .then(function (response) {
-          console.log("Data: ", response.data);
           setListProduct(response.data);
           //   Alert.alert("Thông báo", "Đổi mật khẩu thành công!", [
           //     { text: "OK", onPress: () => navigation.navigate("Login") },

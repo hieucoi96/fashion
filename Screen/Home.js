@@ -12,7 +12,6 @@ import {
 } from "react-native";
 import NumberFormat from "react-number-format";
 import axios from "axios";
-import { DATA_PRODUCT } from "../api/constants";
 
 const ItemHorizontal = ({ item, onPress, backgroundColor, textColor }) => (
   <TouchableOpacity
@@ -80,12 +79,17 @@ const Home = ({ navigation, route }) => {
   }, []);
 
   function openProductDetails(item) {
-    navigation.navigate("ProductDetails", { item: item });
+    navigation.navigate("ProductDetails", { item, token });
   }
 
-  const openCollectionDetails = (collection_id) => {
+  const openCollectionDetails = (c) => {
     navigation.navigate("Search", {
-      params: { collection_id, token },
+      params: {
+        collection_id: c.collection_id,
+        name: c.name,
+        token,
+        prevScreen: "Home",
+      },
       screen: "ListProduct",
     });
   };
@@ -112,7 +116,7 @@ const Home = ({ navigation, route }) => {
       <ItemVertical
         item={item}
         onPress={() => {
-          openCollectionDetails(item.collection_id);
+          openCollectionDetails(item);
         }}
         backgroundColor={{ backgroundColor }}
         textColor={{ color }}

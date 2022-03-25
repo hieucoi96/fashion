@@ -1,19 +1,15 @@
-import React, { useState, useRef } from "react";
+import React, { useState } from "react";
 import {
   StyleSheet,
   Text,
   View,
   TouchableOpacity,
   TextInput,
-  Image,
   Alert,
   ActivityIndicator,
 } from "react-native";
-import { FontAwesome } from "@expo/vector-icons";
 import { useFonts } from "expo-font";
-import { AntDesign } from "@expo/vector-icons";
 import Ripple from "react-native-material-ripple";
-import LottieView from "lottie-react-native";
 import axios from "axios";
 
 const Login = ({ navigation }) => {
@@ -87,6 +83,7 @@ const Login = ({ navigation }) => {
           />
         </View>
         <TouchableOpacity
+          disabled={loading}
           onPress={() => {
             navigation.navigate("ChangePassword");
           }}
@@ -97,6 +94,7 @@ const Login = ({ navigation }) => {
 
       <Ripple
         style={styles.button_login}
+        disabled={loading}
         onPress={() => {
           userLogin();
         }}
@@ -114,6 +112,7 @@ const Login = ({ navigation }) => {
       <View style={styles.text_question}>
         <Text>Bạn chưa có tài khoản? </Text>
         <TouchableOpacity
+          disabled={loading}
           onPress={() => {
             navigation.navigate("Register");
           }}
@@ -121,25 +120,6 @@ const Login = ({ navigation }) => {
           <Text style={styles.text_register_text}>Đăng ký</Text>
         </TouchableOpacity>
       </View>
-
-      {/* <View style={styles.button_container}>
-        <Ripple style={styles.button_login_google}>
-          
-          <Image
-            style={{ width: 23, height: 23, marginRight: 5 }}
-            source={require("../assets/icon_google.png")}
-          />
-          <Text> Google</Text>
-        </Ripple>
-        <Ripple style={styles.button_login_facebook}>
-          
-          <Image
-            style={{ width: 23, height: 23, marginRight: 5 }}
-            source={require("../assets/icon_facebook.png")}
-          />
-          <Text> Facebook</Text>
-        </Ripple>
-      </View> */}
     </View>
   );
 };
