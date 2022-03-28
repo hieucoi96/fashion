@@ -59,6 +59,8 @@ const Item = ({ item, onPress, navigation, textColor }) => (
       navigation.navigate("ListProduct", {
         name: item.name + " nữ",
         prevScreen: "Gender",
+        type: item.name,
+        gender: "Female",
       })
     }
     activeOpacity={1}

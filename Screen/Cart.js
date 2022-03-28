@@ -22,10 +22,17 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 import FlashMessage, { showMessage } from "react-native-flash-message";
 import Ripple from "react-native-material-ripple";
+import axios from "axios";
 
 const Cart = ({ navigation }) => {
   const dispatch = useDispatch();
-  const data = useSelector((state) => state.itemReducer.data);
+  const data = useSelector((state) => state.userReducer.cart);
+  const token = useSelector((state) => state.userReducer.token);
+
+  const instance = axios.create({
+    baseURL: "https://hieuhmph12287-lab5.herokuapp.com/",
+    headers: { "x-access-token": token },
+  });
 
   const modalFlash = useRef();
   const [sizes, setSizes] = useState([]);
@@ -143,7 +150,23 @@ const Cart = ({ navigation }) => {
         onPress: () => {},
         style: "cancel",
       },
-      { text: "Có", onPress: () => dispatch(deleteItem(key)) },
+      {
+        text: "Có",
+        onPress: () => {
+          instance
+            .post("/users/addItemToCart", {
+              variant_id: key,
+              quantity: 0,
+            })
+            .then(function (response) {
+              console.log("Res:", response.data);
+            })
+            .catch(function (error) {
+              console.log(error);
+            });
+          dispatch(deleteItem(key));
+        },
+      },
     ]);
   }
 
@@ -371,7 +394,7 @@ const Cart = ({ navigation }) => {
                 <View style={{ flex: 1 }}>
                   <TouchableOpacity
                     style={{ alignSelf: "flex-end", marginRight: -4 }}
-                    onPress={() => removeItem(item.v_id)}
+                    onPress={() => removeItem(item.variant_id)}
                   >
                     <EvilIcons name="close" size={24} color="black" />
                   </TouchableOpacity>
@@ -381,6 +404,17 @@ const Cart = ({ navigation }) => {
                   <TouchableOpacity
                     style={{ padding: 5 }}
                     onPress={() => {
+                      instance
+                        .post("/users/addItemToCart", {
+                          variant_id: item.variant_id,
+                          quantity: -1,
+                        })
+                        .then(function (response) {
+                          console.log("Res:", response.data);
+                        })
+                        .catch(function (error) {
+                          console.log(error);
+                        });
                       dispatch(decreaseQuantity(item));
                     }}
                   >
@@ -397,7 +431,20 @@ const Cart = ({ navigation }) => {
                   </Text>
                   <TouchableOpacity
                     style={{ padding: 5 }}
-                    onPress={() => dispatch(increaseQuantity(item))}
+                    onPress={() => {
+                      instance
+                        .post("/users/addItemToCart", {
+                          variant_id: item.variant_id,
+                          quantity: 1,
+                        })
+                        .then(function (response) {
+                          console.log("Res:", response.data);
+                        })
+                        .catch(function (error) {
+                          console.log(error);
+                        });
+                      dispatch(increaseQuantity(item));
+                    }}
                   >
                     <AntDesign name="plus" size={16} color="black" />
                   </TouchableOpacity>

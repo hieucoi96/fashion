@@ -20,9 +20,10 @@ const heartOutline = require("../assets/icon_heart_outline.png");
 const heartFull = require("../assets/icon_heart_full.png");
 
 const ListProduct = ({ route, navigation }) => {
-  const { collection_id, token } = route.params ?? {};
+  const { collection_id, type, gender } = route.params ?? {};
   const [loading, setLoading] = useState(false);
   const [listProduct, setListProduct] = useState(null);
+  const token = useSelector((state) => state.userReducer.token);
 
   const instance = axios.create({
     baseURL: "https://hieuhmph12287-lab5.herokuapp.com/",
@@ -30,10 +31,29 @@ const ListProduct = ({ route, navigation }) => {
   });
 
   useEffect(() => {
+    setLoading(true);
     if (collection_id) {
-      setLoading(true);
       instance
         .get("products/getProducts/" + collection_id)
+        .then(function (response) {
+          setListProduct(response.data);
+          //   Alert.alert("Thông báo", "Đổi mật khẩu thành công!", [
+          //     { text: "OK", onPress: () => navigation.navigate("Login") },
+          //   ]);
+        })
+        .catch(function (error) {
+          //   Alert.alert(
+          //     "Thông báo",
+          //     "Đổi mật khẩu không thành công: " + error.message
+          //   );
+          console.log(error);
+        })
+        .then(function () {
+          setLoading(false);
+        });
+    } else {
+      instance
+        .get("products/getProducts/" + gender + "&" + type)
         .then(function (response) {
           setListProduct(response.data);
           //   Alert.alert("Thông báo", "Đổi mật khẩu thành công!", [
@@ -66,8 +86,7 @@ const ListProduct = ({ route, navigation }) => {
   }
 
   const Item = ({ item, addOrRemoveFav, favorite, textColor }) => {
-    const fav_product_list = useSelector((state) => state.favReducer.data);
-    let ids = fav_product_list.map((item) => item.id);
+    const fav_product_list = useSelector((state) => state.userReducer.favorite);
     const dispatch = useDispatch();
 
     return (
@@ -85,10 +104,24 @@ const ListProduct = ({ route, navigation }) => {
           >
             <TouchableOpacity
               style={styles.btn}
-              onPress={() => dispatch(changeFav(item, item.id))}
+              onPress={() => {
+                instance
+                  .get("/users/addFavorite/" + item.product_id)
+                  .then(function (response) {})
+                  .catch(function (error) {
+                    // Alert.alert("Thông báo", "Đăng nhập không thành công!");
+                    console.log(error);
+                  });
+
+                dispatch(changeFav(item.product_id));
+              }}
             >
               <Image
-                source={ids.indexOf(item.id) > -1 ? heartFull : heartOutline}
+                source={
+                  fav_product_list.indexOf(item.product_id) > -1
+                    ? heartFull
+                    : heartOutline
+                }
                 style={styles.iconFav}
               />
             </TouchableOpacity>
@@ -236,7 +269,7 @@ const ListProduct = ({ route, navigation }) => {
                 style={{ flex: 1, marginTop: 0 }}
                 data={listProduct}
                 renderItem={renderItem}
-                keyExtractor={(item) => item.produc_id}
+                keyExtractor={(item) => item.product_id}
                 numColumns={2}
                 key={1}
                 showsVerticalScrollIndicator={false}
@@ -247,7 +280,7 @@ const ListProduct = ({ route, navigation }) => {
                 style={{ flex: 1, marginTop: 0 }}
                 data={listProduct}
                 renderItem={renderItem}
-                keyExtractor={(item) => item.id}
+                keyExtractor={(item) => item.product_id}
                 numColumns={1}
                 key={0}
                 showsVerticalScrollIndicator={false}

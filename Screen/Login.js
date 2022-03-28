@@ -11,8 +11,11 @@ import {
 import { useFonts } from "expo-font";
 import Ripple from "react-native-material-ripple";
 import axios from "axios";
+import { useDispatch } from "react-redux";
+import { addUserInfo } from "../store/itemAction";
 
 const Login = ({ navigation }) => {
+  const dispatch = useDispatch();
   const [phone_number, setPhone] = useState("0977052703");
   const [password, setPassword] = useState("1");
   const [loading, setLoading] = useState(false);
@@ -42,6 +45,7 @@ const Login = ({ navigation }) => {
         const token = response.data.token;
         console.log("Res:", response.data);
         setLoading(false);
+        dispatch(addUserInfo(response.data));
         navigation.navigate("MainStack", {
           params: { phone_number, token },
           screen: "Home",

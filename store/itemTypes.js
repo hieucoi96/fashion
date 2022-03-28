@@ -6,3 +6,5 @@ export const CHANGE_COLOR = "CHANGE_COLOR";
 export const CHANGE_SIZE = "CHANGE_SIZE";
 export const CHANGE_FAV = "CHANGE_FAV";
 export const CHANGE_INFO = "CHANGE_INFO";
+export const ADD_USER_INFO = "ADD_USER_INFO";
+export const UPDATE_CART = "UPDATE_CART";

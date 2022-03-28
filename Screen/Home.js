@@ -12,6 +12,7 @@ import {
 } from "react-native";
 import NumberFormat from "react-number-format";
 import axios from "axios";
+import { useDispatch, useSelector } from "react-redux";
 
 const ItemHorizontal = ({ item, onPress, backgroundColor, textColor }) => (
   <TouchableOpacity
@@ -51,6 +52,8 @@ const Home = ({ navigation, route }) => {
   const [horizontalList, setHorizontalList] = useState(null);
   const [verticalList, setVerticalList] = useState(null);
   const [loading, setLoading] = useState(false);
+  const userInfo = useSelector((state) => state.userReducer);
+  // console.log("Home user info: ", userInfo);
 
   const instance = axios.create({
     baseURL: "https://hieuhmph12287-lab5.herokuapp.com/",

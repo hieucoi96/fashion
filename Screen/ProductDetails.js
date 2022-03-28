@@ -30,6 +30,7 @@ import Ripple from "react-native-material-ripple";
 import LottieView from "lottie-react-native";
 import moment from "moment";
 import axios from "axios";
+import { addUserInfo } from "../store/itemAction";
 
 const heartOutline = require("../assets/icon_heart_outline.png");
 const heartFull = require("../assets/icon_heart_full.png");
@@ -38,12 +39,11 @@ const windowHeight = Dimensions.get("screen").height;
 const { width: screenWidth, height: screenHeight } = Dimensions.get("window");
 
 const ProductDetails = ({ route, navigation }) => {
-  const { item, token } = route.params;
+  const { item } = route.params;
 
   const dispatch = useDispatch();
-  const fav_product_list = useSelector((state) => state.favReducer.data);
-  console.log("Check1: ", fav_product_list);
-
+  const fav_product_list = useSelector((state) => state.userReducer.favorite);
+  const token = useSelector((state) => state.userReducer.token);
   const scrollViewRef = useRef();
   const parabolic = useRef();
   const add_to_cart = useRef();
@@ -130,8 +130,6 @@ const ProductDetails = ({ route, navigation }) => {
   }, [currentInfo]);
 
   useEffect(() => {
-    console.log("Item: ", item);
-    console.log("Check: ", item.collection_id + " - " + item.type);
     setLoading(true);
     instance
       .post("/products/getRelatedProducts", {
@@ -140,7 +138,6 @@ const ProductDetails = ({ route, navigation }) => {
         product_id: item.product_id,
       })
       .then(function (response) {
-        console.log("Response related products:", response.data);
         setRelatedProduct(response.data);
       })
       .catch(function (error) {
@@ -222,14 +219,12 @@ const ProductDetails = ({ route, navigation }) => {
         addOrRemoveFav={() => {
           instance
             .get("/users/addFavorite/" + item.product_id)
-            .then(function (response) {
-              console.log("Response Fav:", response.data);
-            })
+            .then(function (response) {})
             .catch(function (error) {
               // Alert.alert("Thông báo", "Đăng nhập không thành công!");
               console.log(error);
             });
-          dispatch(changeFav(item, item.product_id));
+          dispatch(changeFav(item.product_id));
         }}
         favorite={fav_product_list}
         onPress={() => navigation.push("ProductDetails", { item: item })}
@@ -333,22 +328,17 @@ const ProductDetails = ({ route, navigation }) => {
     let v_id = value.substring(0, index);
     let size = value.substring(index + 1);
 
-    dispatch(
-      addItem({
-        key: Math.random().toString(36).substr(2, 9),
-        v_id: v_id,
-        id: item.product_id,
-        name: item.name,
-        src: currentInfo.src,
-        status: item.status,
-        old_price: item.old_price,
-        price: currentInfo.price,
-        variant: item.variant,
-        color: currentInfo.color,
-        size: size,
-        quantity: 1,
+    instance
+      .post("/users/addItemToCart", { variant_id: v_id, quantity: 1 })
+      .then(function (response) {
+        console.log("Cart res: ", response.data);
+        dispatch(addUserInfo(response.data));
       })
-    );
+      .catch(function (error) {
+        // Alert.alert("Thông báo", "Đăng nhập không thành công!");
+        console.log(error);
+      });
+
     if (gotoCart) {
       navigation.navigate("Cart");
     }
@@ -357,18 +347,16 @@ const ProductDetails = ({ route, navigation }) => {
   const changeFavorite = () => {
     instance
       .get("/users/addFavorite/" + item.product_id)
-      .then(function (response) {
-        console.log("Response Fav:", response.data);
-      })
+      .then(function (response) {})
       .catch(function (error) {
         // Alert.alert("Thông báo", "Đăng nhập không thành công!");
         console.log(error);
       });
-    dispatch(changeFav(item, item.product_id));
+    dispatch(changeFav(item.product_id));
   };
 
   const Item = ({ item, addOrRemoveFav, favorite, onPress }) => {
-    const fav = favorite.some((i) => i.product_id === item.product_id);
+    const fav = favorite.includes(item.product_id);
     const animationProgress = useRef(new Animated.Value(fav ? 1 : 0)).current;
 
     const changeFavorite = () => {
@@ -496,7 +484,9 @@ const ProductDetails = ({ route, navigation }) => {
           >
             <Image
               source={
-                fav_product_list.indexOf(item) > -1 ? heartFull : heartOutline
+                fav_product_list.indexOf(item.product_id) > -1
+                  ? heartFull
+                  : heartOutline
               }
               style={styles.iconFav}
             />

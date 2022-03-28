@@ -280,6 +280,7 @@ function MainStack() {
   return (
     <TabHome.Navigator
       tabBarOptions={{
+        keyboardHidesTabBar: true,
         activeTintColor: "#000000",
         showLabel: false,
         style: { height: 75 },
