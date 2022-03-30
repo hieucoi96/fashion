@@ -69,6 +69,7 @@ const Login = ({ navigation }) => {
             style={styles.input}
             onChangeText={(phone) => setPhone(phone)}
             value={phone_number}
+            keyboardType={"phone-pad"}
             editable={!loading}
             placeholder="Số điện thoại"
             placeholderTextColor="#636366"

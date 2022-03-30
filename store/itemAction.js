@@ -8,6 +8,7 @@ import {
   CHANGE_FAV,
   CHANGE_INFO,
   ADD_USER_INFO,
+  UPDATE_DELIVERY,
 } from "./itemTypes";
 export const addItem = (item) => ({
   type: ADD_ITEM,
@@ -39,14 +40,23 @@ export const changeFav = (id) => ({
   type: CHANGE_FAV,
   id: id,
 });
-export const changeInfo = (key, v_id, color, src, price, size) => ({
-  type: CHANGE_INFO,
+export const changeInfo = (
   key,
-  v_id,
+  variant_id,
   color,
   src,
   price,
   size,
+  quantity
+) => ({
+  type: CHANGE_INFO,
+  key,
+  variant_id,
+  color,
+  src,
+  price,
+  size,
+  quantity,
 });
 export const addUserInfo = (user) => ({
   type: ADD_USER_INFO,
@@ -55,4 +65,8 @@ export const addUserInfo = (user) => ({
 export const updateCart = (cart) => ({
   type: UPDATE_CART,
   payload: cart,
+});
+export const updateDelivery = (deliveryList) => ({
+  type: UPDATE_DELIVERY,
+  payload: deliveryList,
 });

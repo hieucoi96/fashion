@@ -4,7 +4,7 @@ import favReducer from "./favReducer";
 import userReducer from "./userReducer";
 
 export default combineReducers({
-  itemReducer,
+  // itemReducer,
   //   favReducer,
   userReducer,
 });

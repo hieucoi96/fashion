@@ -10,6 +10,7 @@ import {
   Modal,
   ImageBackground,
   Animated,
+  ActivityIndicator,
 } from "react-native";
 import NumberFormat from "react-number-format";
 import { EvilIcons, AntDesign } from "@expo/vector-icons";
@@ -45,13 +46,14 @@ const Cart = ({ navigation }) => {
     variant: [],
   });
   const [selectedTemp, setSelectedTemp] = useState({
-    v_id: "",
+    variant_id: "",
     color: "",
     src: "",
     price: "",
   });
   const [selectedSize, setSelectedSize] = useState("");
   const [modalVisible, setModalVisible] = useState(false);
+  const [loading, setLoading] = useState(false);
   const fadeAnim = useState(new Animated.Value(1))[0];
 
   useEffect(() => {
@@ -112,7 +114,7 @@ const Cart = ({ navigation }) => {
               }).start();
               setSelectedSize("");
               setSelectedTemp({
-                v_id: "",
+                variant_id: "",
                 color: item.color,
                 src: item.src,
                 price: item.price,
@@ -153,6 +155,7 @@ const Cart = ({ navigation }) => {
       {
         text: "Có",
         onPress: () => {
+          setLoading(true);
           instance
             .post("/users/addItemToCart", {
               variant_id: key,
@@ -160,11 +163,14 @@ const Cart = ({ navigation }) => {
             })
             .then(function (response) {
               console.log("Res:", response.data);
+              dispatch(deleteItem(key));
             })
             .catch(function (error) {
               console.log(error);
+            })
+            .then(function () {
+              setLoading(false);
             });
-          dispatch(deleteItem(key));
         },
       },
     ]);
@@ -172,154 +178,191 @@ const Cart = ({ navigation }) => {
 
   return (
     <View style={styles.container}>
+      {/* <Modal animationType="fade" transparent={true} visible={loading}></Modal> */}
       <Modal
         animationType="fade"
         transparent={true}
-        visible={modalVisible}
+        visible={modalVisible || loading}
         onRequestClose={() => {
           setModalVisible(!modalVisible);
         }}
       >
-        <TouchableOpacity
-          style={styles.centeredView}
-          onPress={() => setModalVisible(!modalVisible)}
-          activeOpacity={1}
-        >
-          <TouchableOpacity
-            style={styles.modalView}
-            onPress={() => {}}
-            activeOpacity={1}
-          >
-            <Animated.View
-              style={{
-                opacity: fadeAnim,
-              }}
-            >
-              <ImageBackground
-                style={{ width: "100%", height: 289 }}
-                source={{ uri: selectedTemp.src }}
+        {loading ? (
+          <View style={{ flex: 1, backgroundColor: "rgba(0,0,0,0.5)" }}>
+            <View style={{ flex: 1, width: "100%" }}>
+              <View
+                style={{
+                  flex: 1,
+                  justifyContent: "center",
+                }}
               >
-                <TouchableOpacity
-                  style={{ alignSelf: "flex-end", margin: 10 }}
-                  onPress={() => {
-                    setModalVisible(!modalVisible);
-                  }}
-                >
-                  <EvilIcons name="close" size={24} color="black" />
-                </TouchableOpacity>
-              </ImageBackground>
-            </Animated.View>
-
-            <View style={{ padding: 15, alignItems: "flex-start" }}>
-              <Text
-                style={[
-                  styles.text_small,
-                  { fontWeight: "bold", textTransform: "uppercase" },
-                ]}
-              >
-                {selectedItem.status}
-              </Text>
-              <Text style={styles.text_normal}>{selectedItem.name}</Text>
-              <NumberFormat
-                value={selectedItem.old_price}
-                displayType={"text"}
-                thousandSeparator={true}
-                suffix={" đ"}
-                renderText={(value, props) => (
-                  <Text style={styles.text_old_price} {...props}>
-                    {value}
-                  </Text>
-                )}
-              />
-
-              <NumberFormat
-                value={selectedTemp.price}
-                displayType={"text"}
-                thousandSeparator={true}
-                suffix={" đ"}
-                renderText={(value, props) => (
-                  <Text style={styles.text_normal} {...props}>
-                    {value}
-                  </Text>
-                )}
-              />
-              <Text
-                style={[
-                  styles.text_small,
-                  {
-                    fontWeight: "bold",
-                    textTransform: "uppercase",
-                    marginTop: 15,
-                  },
-                ]}
-              >
-                Màu sắc
-              </Text>
-              <View style={{ flexDirection: "row", marginTop: 10 }}>
-                {listColors}
-              </View>
-              <Text
-                style={[
-                  styles.text_small,
-                  {
-                    fontWeight: "bold",
-                    textTransform: "uppercase",
-                    marginTop: 15,
-                  },
-                ]}
-              >
-                Size
-              </Text>
-              <View style={{ flexDirection: "row", marginTop: 10 }}>
-                {listSizes}
+                <ActivityIndicator size="large" color={"#E7F3F1"} />
               </View>
             </View>
+          </View>
+        ) : (
+          <TouchableOpacity
+            style={styles.centeredView}
+            onPress={() => setModalVisible(!modalVisible)}
+            activeOpacity={1}
+          >
             <TouchableOpacity
-              style={styles.button_order}
-              activeOpacity={0.8}
-              onPress={() => {
-                if (selectedSize === "") {
-                  modalFlash.current.showMessage({
-                    message: "Bạn chưa chọn size!",
-                    description: "Vui lòng chọn size sản phẩm!",
-                    type: "warning",
-                    icon: { icon: "auto", position: "left" },
-                    backgroundColor: "#454545",
-                  });
-                  return;
-                }
-                let v_id;
-                for (let i = 0; i < selectedItem.variant.length; i++) {
-                  if (
-                    selectedItem.variant[i].color === selectedTemp.color &&
-                    selectedItem.variant[i].size === selectedSize
-                  ) {
-                    console.log(selectedItem.variant[i].v_id);
-                    v_id = selectedItem.variant[i].v_id;
-                  }
-                }
-                dispatch(
-                  changeInfo(
-                    selectedItem.key,
-                    v_id,
-                    selectedTemp.color,
-                    selectedTemp.src,
-                    selectedTemp.price,
-                    selectedSize
-                  )
-                );
-                setModalVisible(!modalVisible);
-              }}
+              style={styles.modalView}
+              onPress={() => {}}
+              activeOpacity={1}
             >
-              <Text style={styles.text_order}>Thay đổi</Text>
+              <Animated.View
+                style={{
+                  opacity: fadeAnim,
+                }}
+              >
+                <ImageBackground
+                  style={{ width: "100%", height: 289 }}
+                  source={{ uri: selectedTemp.src }}
+                >
+                  <TouchableOpacity
+                    style={{ alignSelf: "flex-end", margin: 10 }}
+                    onPress={() => {
+                      setModalVisible(!modalVisible);
+                    }}
+                  >
+                    <EvilIcons name="close" size={24} color="black" />
+                  </TouchableOpacity>
+                </ImageBackground>
+              </Animated.View>
+
+              <View style={{ padding: 15, alignItems: "flex-start" }}>
+                <Text
+                  style={[
+                    styles.text_small,
+                    { fontWeight: "bold", textTransform: "uppercase" },
+                  ]}
+                >
+                  {selectedItem.status}
+                </Text>
+                <Text style={styles.text_normal}>{selectedItem.name}</Text>
+                <NumberFormat
+                  value={selectedItem.old_price}
+                  displayType={"text"}
+                  thousandSeparator={true}
+                  suffix={" đ"}
+                  renderText={(value, props) => (
+                    <Text style={styles.text_old_price} {...props}>
+                      {value}
+                    </Text>
+                  )}
+                />
+
+                <NumberFormat
+                  value={selectedTemp.price}
+                  displayType={"text"}
+                  thousandSeparator={true}
+                  suffix={" đ"}
+                  renderText={(value, props) => (
+                    <Text style={styles.text_normal} {...props}>
+                      {value}
+                    </Text>
+                  )}
+                />
+                <Text
+                  style={[
+                    styles.text_small,
+                    {
+                      fontWeight: "bold",
+                      textTransform: "uppercase",
+                      marginTop: 15,
+                    },
+                  ]}
+                >
+                  Màu sắc
+                </Text>
+                <View style={{ flexDirection: "row", marginTop: 10 }}>
+                  {listColors}
+                </View>
+                <Text
+                  style={[
+                    styles.text_small,
+                    {
+                      fontWeight: "bold",
+                      textTransform: "uppercase",
+                      marginTop: 15,
+                    },
+                  ]}
+                >
+                  Size
+                </Text>
+                <View style={{ flexDirection: "row", marginTop: 10 }}>
+                  {listSizes}
+                </View>
+              </View>
+              <TouchableOpacity
+                style={styles.button_order}
+                activeOpacity={0.8}
+                onPress={() => {
+                  if (selectedSize === "") {
+                    modalFlash.current.showMessage({
+                      message: "Bạn chưa chọn size!",
+                      description: "Vui lòng chọn size sản phẩm!",
+                      type: "warning",
+                      icon: { icon: "auto", position: "left" },
+                      backgroundColor: "#454545",
+                    });
+                    return;
+                  }
+                  let variant_id;
+                  for (let i = 0; i < selectedItem.variant.length; i++) {
+                    if (
+                      selectedItem.variant[i].color === selectedTemp.color &&
+                      selectedItem.variant[i].size === selectedSize
+                    ) {
+                      console.log(selectedItem.variant[i].variant_id);
+                      variant_id = selectedItem.variant[i].variant_id;
+                    }
+                  }
+
+                  setLoading(true);
+                  instance
+                    .post("/users/changeVariantCart", {
+                      variant_id,
+                      _id: selectedItem.key,
+                    })
+                    .then(function (response) {
+                      console.log("Res change cart: ", response.data);
+                      dispatch(
+                        changeInfo(
+                          selectedItem.key,
+                          variant_id,
+                          selectedTemp.color,
+                          selectedTemp.src,
+                          selectedTemp.price,
+                          selectedSize,
+                          selectedItem.quantity
+                        )
+                      );
+                    })
+                    .catch(function (error) {
+                      Alert.alert(
+                        "Thông báo",
+                        "Đã xảy ra lỗi trong quá trình cập nhật giỏ hàng!"
+                      );
+                      console.log(error);
+                    })
+                    .then(function () {
+                      setLoading(false);
+                      setModalVisible(!modalVisible);
+                    });
+                }}
+              >
+                <Text style={styles.text_order}>Thay đổi</Text>
+              </TouchableOpacity>
             </TouchableOpacity>
+            <FlashMessage
+              ref={modalFlash}
+              // position={ Platform.OS === 'ios' ? "top" : {top:StatusBar.currentHeight, left:0, right:0} }
+              floating={Platform.OS !== "ios"}
+            />
           </TouchableOpacity>
-          <FlashMessage
-            ref={modalFlash}
-            // position={ Platform.OS === 'ios' ? "top" : {top:StatusBar.currentHeight, left:0, right:0} }
-            floating={Platform.OS !== "ios"}
-          />
-        </TouchableOpacity>
+        )}
       </Modal>
       <View style={{ flex: 1, padding: 15 }}>
         <FlatList
@@ -331,7 +374,7 @@ const Cart = ({ navigation }) => {
                 setSelectedItem(item);
                 setModalVisible(true);
                 setSelectedTemp({
-                  v_id: "",
+                  variant_id: "",
                   color: item.color,
                   src: item.src,
                   price: item.price,
@@ -404,6 +447,7 @@ const Cart = ({ navigation }) => {
                   <TouchableOpacity
                     style={{ padding: 5 }}
                     onPress={() => {
+                      setLoading(true);
                       instance
                         .post("/users/addItemToCart", {
                           variant_id: item.variant_id,
@@ -411,11 +455,14 @@ const Cart = ({ navigation }) => {
                         })
                         .then(function (response) {
                           console.log("Res:", response.data);
+                          dispatch(decreaseQuantity(item));
                         })
                         .catch(function (error) {
                           console.log(error);
+                        })
+                        .then(function () {
+                          setLoading(false);
                         });
-                      dispatch(decreaseQuantity(item));
                     }}
                   >
                     <AntDesign name="minus" size={16} color="black" />
@@ -432,6 +479,7 @@ const Cart = ({ navigation }) => {
                   <TouchableOpacity
                     style={{ padding: 5 }}
                     onPress={() => {
+                      setLoading(true);
                       instance
                         .post("/users/addItemToCart", {
                           variant_id: item.variant_id,
@@ -439,11 +487,14 @@ const Cart = ({ navigation }) => {
                         })
                         .then(function (response) {
                           console.log("Res:", response.data);
+                          dispatch(increaseQuantity(item));
                         })
                         .catch(function (error) {
                           console.log(error);
+                        })
+                        .then(function () {
+                          setLoading(false);
                         });
-                      dispatch(increaseQuantity(item));
                     }}
                   >
                     <AntDesign name="plus" size={16} color="black" />
@@ -452,7 +503,7 @@ const Cart = ({ navigation }) => {
               </View>
             </TouchableOpacity>
           )}
-          keyExtractor={(item) => item.key}
+          keyExtractor={(item) => item.variant_id}
           showsVerticalScrollIndicator={false}
         />
       </View>

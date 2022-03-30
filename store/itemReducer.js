@@ -84,11 +84,11 @@ const itemReducer = (state = initialState, action) => {
           };
         }),
       };
-    case CHANGE_INFO:
-      return {
-        ...state,
-        data: change_info(state, action),
-      };
+    // case CHANGE_INFO:
+    //   return {
+    //     ...state,
+    //     data: change_info(state, action),
+    //   };
     default:
       return state;
   }
@@ -114,32 +114,32 @@ const itemReducer = (state = initialState, action) => {
 //   });
 // }
 
-function change_info(state, action) {
-  let duplicate = false;
-  const x = state.data.map((item) => {
-    if (item.key !== action.key && item.v_id === action.v_id) {
-      duplicate = true;
-      return {
-        ...item,
-        quantity: item.quantity + 1,
-      };
-    }
-    if (item.key !== action.key) {
-      return item;
-    }
-    return {
-      ...item,
-      v_id: action.v_id,
-      color: action.color,
-      src: action.src,
-      price: action.price,
-      size: action.size,
-    };
-  });
-  if (duplicate) {
-    return x.filter((item) => item.key !== action.key);
-  }
-  return x;
-}
+// function change_info(state, action) {
+//   let duplicate = false;
+//   const x = state.data.map((item) => {
+//     if (item.key !== action.key && item.v_id === action.v_id) {
+//       duplicate = true;
+//       return {
+//         ...item,
+//         quantity: item.quantity + 1,
+//       };
+//     }
+//     if (item.key !== action.key) {
+//       return item;
+//     }
+//     return {
+//       ...item,
+//       v_id: action.v_id,
+//       color: action.color,
+//       src: action.src,
+//       price: action.price,
+//       size: action.size,
+//     };
+//   });
+//   if (duplicate) {
+//     return x.filter((item) => item.key !== action.key);
+//   }
+//   return x;
+// }
 
 export default itemReducer;
