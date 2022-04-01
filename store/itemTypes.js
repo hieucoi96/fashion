@@ -8,4 +8,5 @@ export const CHANGE_FAV = "CHANGE_FAV";
 export const CHANGE_INFO = "CHANGE_INFO";
 export const ADD_USER_INFO = "ADD_USER_INFO";
 export const UPDATE_DELIVERY = "UPDATE_DELIVERY";
+export const CLEAR_CART = "CLEAR_CART";
 export const UPDATE_CART = "UPDATE_CART";

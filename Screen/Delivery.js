@@ -17,7 +17,7 @@ import { useIsFocused } from "@react-navigation/native";
 const Delivery = ({ route, navigation }) => {
   const isFocused = useIsFocused();
   const delivery = useSelector((state) => state.userReducer.delivery);
-  console.log("Render Deli: ", delivery);
+
   const [addressList, setData] = useState([]);
   const { total_product, total_value } = route.params;
   const { address } = route.params ?? {};

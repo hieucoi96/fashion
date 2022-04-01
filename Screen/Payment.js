@@ -7,20 +7,61 @@ import {
   Image,
   TouchableOpacity,
   TextInput,
-  ImageBackground,
+  Alert,
   Modal,
+  ActivityIndicator,
 } from "react-native";
 import { RadioButton } from "react-native-paper";
 import NumberFormat from "react-number-format";
 import LottieView from "lottie-react-native";
+import { useDispatch, useSelector } from "react-redux";
+import axios from "axios";
+import { clearCart } from "../store/itemAction";
+
+// import RNMomosdk from "react-native-momosdk";
+
+// const merchantname = "CGV Cinemas";
+// const merchantcode = "CGV01";
+// const merchantNameLabel = "Nhà cung cấp";
+// const billdescription = "Fast and Furious 8";
+// const amount = 50000;
+// const enviroment = "0"; //"0": SANBOX , "1": PRODUCTION
 
 const Payment = ({ route, navigation }) => {
   const { data, item, total_value, total_product } = route.params;
   const [value, setValue] = useState("cash");
   const [delivery_value, setDelivery] = useState(20000);
-  const [sale_value, setSale] = useState(0);
+  const [sale_value, setSale] = useState({ discount_id: null, value: null });
+  const [discountCode, setDiscountCode] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [orderLoading, setOrderLoading] = useState(false);
 
   const [modalVisible, setModalVisible] = useState(false);
+
+  const dispatch = useDispatch();
+  const token = useSelector((state) => state.userReducer.token);
+  const cart = useSelector((state) => state.userReducer.cart);
+
+  const product = cart.map((product) => {
+    return {
+      item_bought_id: Math.random().toString(36).substr(2, 9),
+      product_id: product.product_id,
+      variant_id: product.variant_id,
+      name: product.name,
+      status: product.status,
+      color: product.color,
+      size: product.size,
+      price: product.price,
+      src: product.src,
+      quantity: product.quantity,
+      evaluate: false,
+    };
+  });
+
+  const instance = axios.create({
+    baseURL: "https://hieuhmph12287-lab5.herokuapp.com/",
+    headers: { "x-access-token": token },
+  });
 
   const imageList = data.map(
     (item, index) =>
@@ -36,26 +77,71 @@ const Payment = ({ route, navigation }) => {
 
   function openOrder() {
     clearTimeout(timerRef.current);
-    navigation.navigate("OrderDetails", {
-      bill: {
-        bill_code: "FASN8888",
-        datetime: "12:48  01-06-2021",
-        name: item.name_receiver,
-        phone_number: item.phone_receiver,
-        city: item.city,
-        district: item.district,
-        sub_district: item.sub_district,
-        addrress_detail: item.addrress_detail,
-        address: item.address,
-        sale_value: sale_value,
-        delivery_value: delivery_value,
-        total_value: total_value,
-        final_value: total_value + delivery_value - sale_value,
-        total_product: total_product,
-        item: data,
-      },
-    });
   }
+
+  const checkDiscountCode = () => {
+    if (!sale_value.value) {
+      setLoading(true);
+      instance
+        .get("/discounts/checkDiscounts/" + discountCode)
+        .then(function (response) {
+          console.log("Res:", response.data);
+          setSale(response.data);
+          Alert.alert("Thông báo", "Mã khuyến mại đã được áp dụng!");
+        })
+        .catch(function (error) {
+          console.log(error);
+          if (error.response.status === 409) {
+            Alert.alert("Thông báo", "Mã khuyến mại không hợp lệ!");
+          }
+        })
+        .then(function () {
+          setLoading(false);
+        });
+    } else {
+      setSale({ discount_id: null, value: null });
+    }
+  };
+
+  // const onPress = async () => {
+  //   let jsonData = {};
+  //   jsonData.enviroment = enviroment; //SANBOX OR PRODUCTION
+  //   jsonData.action = "gettoken"; //DO NOT EDIT
+  //   jsonData.merchantname = merchantname; //edit your merchantname here
+  //   jsonData.merchantcode = merchantcode; //edit your merchantcode here
+  //   jsonData.merchantnamelabel = merchantNameLabel;
+  //   jsonData.description = billdescription;
+  //   jsonData.amount = 5000; //order total amount
+  //   jsonData.orderId = "ID20181123192300";
+  //   jsonData.orderLabel = "Ma don hang";
+  //   jsonData.appScheme = "momocgv20170101"; // iOS App Only , match with Schemes Indentify from your  Info.plist > key URL types > URL Schemes
+  //   console.log("data_request_payment " + JSON.stringify(jsonData));
+  //   console.log("SDK: ", RNMomosdk.requestPayment(jsonData));
+  //   let dataPayment = await RNMomosdk.requestPayment(jsonData);
+  //   momoHandleResponse(dataPayment);
+  //   // if (Platform.OS === "android") {
+  //   //   let dataPayment = await RNMomosdk.requestPayment(jsonData);
+
+  //   // } else {
+  //   //   RNMomosdk.requestPayment(jsonData);
+  //   // }
+  // };
+
+  // const momoHandleResponse = async (response) => {
+  //   console.log("momoHandleResponse ==== ", response);
+  //   try {
+  //     if (response && response.status == 0) {
+  //       //SUCCESS continue to submit momoToken,phonenumber to server
+  //       let fromapp = response.fromapp; //ALWAYS:: fromapp == momotransfer
+  //       let momoToken = response.data;
+  //       let phonenumber = response.phonenumber;
+  //       let message = response.message;
+  //     } else {
+  //       //let message = response.message;
+  //       //Has Error: show message here
+  //     }
+  //   } catch (ex) {}
+  // };
 
   return (
     <ScrollView
@@ -75,7 +161,7 @@ const Payment = ({ route, navigation }) => {
           onPress={() => {
             setModalVisible(!modalVisible);
             if (value === "cash") {
-              openOrder();
+              // openOrder();
             }
           }}
           activeOpacity={1}
@@ -213,13 +299,34 @@ const Payment = ({ route, navigation }) => {
             </View>
           </RadioButton.Group>
           <View style={styles.sale_container}>
-            <TextInput placeholder="Nhập mã giảm giá" style={{ flex: 1 }} />
+            <TextInput
+              onChangeText={(code) => setDiscountCode(code)}
+              value={discountCode}
+              editable={!loading && !sale_value.value}
+              placeholder="Nhập mã giảm giá"
+              style={{ flex: 1 }}
+            />
             <TouchableOpacity
-              style={{ backgroundColor: "#000000" }}
+              style={{
+                backgroundColor: "#000000",
+                justifyContent: "center",
+                width: 100,
+                paddingHorizontal: 18,
+                height: 40,
+              }}
               activeOpacity={0.8}
-              onPress={() => setSale(20000)}
+              disabled={loading || orderLoading}
+              onPress={() => checkDiscountCode()}
             >
-              <Text style={styles.btn_sale}>ÁP DỤNG</Text>
+              {loading ? (
+                <ActivityIndicator size="small" color={"#E7F3F1"} />
+              ) : (
+                <>
+                  <Text style={styles.btn_sale}>
+                    {sale_value.value ? "HỦY" : "ÁP DỤNG"}
+                  </Text>
+                </>
+              )}
             </TouchableOpacity>
           </View>
         </View>
@@ -253,13 +360,13 @@ const Payment = ({ route, navigation }) => {
             )}
           />
         </View>
-        {sale_value > 0 && (
+        {sale_value.value > 0 && (
           <View
             style={{ marginTop: 5, flexDirection: "row", alignItems: "center" }}
           >
             <Text style={[styles.text_normal, { flex: 1 }]}>Khuyến mãi</Text>
             <NumberFormat
-              value={sale_value}
+              value={sale_value.value}
               displayType={"text"}
               thousandSeparator={true}
               suffix={" đ"}
@@ -279,7 +386,7 @@ const Payment = ({ route, navigation }) => {
             Thành tiền
           </Text>
           <NumberFormat
-            value={total_value + delivery_value - sale_value}
+            value={total_value + delivery_value - sale_value.value}
             displayType={"text"}
             thousandSeparator={true}
             suffix={" đ"}
@@ -296,17 +403,74 @@ const Payment = ({ route, navigation }) => {
         <TouchableOpacity
           style={styles.button_order}
           onPress={() => {
-            setModalVisible(true);
-            timerRef.current = setTimeout(function () {
-              setModalVisible(false);
-              if (value === "cash") {
-                openOrder();
-              }
-            }, 3500);
+            if (value === "cash") {
+              setOrderLoading(true);
+              instance
+                .post("/bills/addBill", {
+                  delivery_id: item.delivery_id,
+                  payment_type: "Tiền mặt",
+                  discount_id: sale_value.discount_id,
+                  product,
+                })
+                .then(function (response) {
+                  console.log("Res:", response.data);
+                  setModalVisible(true);
+                  dispatch(clearCart());
+                  timerRef.current = setTimeout(function () {
+                    setModalVisible(false);
+                    if (value === "cash") {
+                      navigation.navigate("OrderDetails", {
+                        bill: {
+                          bill_id: response.data.bill_id,
+                          datetime: response.data.date_created,
+                          name_receiver: item.name_receiver,
+                          phone_receiver: item.phone_receiver,
+                          city: item.city,
+                          district: item.district,
+                          sub_district: item.sub_district,
+                          address_detail: item.address_detail,
+                          address: item.address,
+                          sale_value: sale_value.value,
+                          delivery_value: delivery_value,
+                          total_value: total_value,
+                          final_value:
+                            total_value + delivery_value - sale_value.value,
+                          total_product: total_product,
+                          product: data,
+                          status: response.data.status,
+                        },
+                      });
+                      openOrder();
+                    }
+                  }, 3500);
+                })
+                .catch(function (error) {
+                  console.log(error.response);
+                  // if (error.response.status === 409) {
+                  //   Alert.alert("Thông báo", "Mã khuyến mại không hợp lệ!");
+                  // }
+                })
+                .then(function () {
+                  setOrderLoading(false);
+                });
+            } else {
+              setModalVisible(true);
+              timerRef.current = setTimeout(function () {
+                setModalVisible(false);
+                // if (value === "cash") {
+                //   openOrder();
+                // }
+              }, 3500);
+            }
           }}
           activeOpacity={0.8}
+          disabled={loading || orderLoading}
         >
-          <Text style={styles.text_order}>Đặt hàng</Text>
+          {orderLoading ? (
+            <ActivityIndicator size="small" color={"#E7F3F1"} />
+          ) : (
+            <Text style={styles.text_order}>Đặt hàng</Text>
+          )}
         </TouchableOpacity>
       </View>
     </ScrollView>
@@ -341,8 +505,7 @@ const styles = StyleSheet.create({
   },
   btn_sale: {
     color: "#ffffff",
-    paddingHorizontal: 18,
-    lineHeight: 50,
+    textAlign: "center",
   },
   bottom_container: {
     width: "100%",

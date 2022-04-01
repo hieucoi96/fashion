@@ -6,6 +6,7 @@ import {
   DECREASE_QUANTITY,
   CHANGE_INFO,
   UPDATE_DELIVERY,
+  CLEAR_CART,
 } from "./itemTypes";
 import { showMessage } from "react-native-flash-message";
 
@@ -68,6 +69,11 @@ const userReducer = (state = initialState, action) => {
       return {
         ...state,
         delivery: action.payload,
+      };
+    case CLEAR_CART:
+      return {
+        ...state,
+        cart: [],
       };
     default:
       return state;

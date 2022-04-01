@@ -33,6 +33,7 @@
     "react-native-flash-message": "^0.1.23",
     "react-native-gesture-handler": "~2.1.0",
     "react-native-material-ripple": "^0.9.1",
+    "react-native-momosdk": "^1.4.3",
     "react-native-paper": "^4.9.1",
     "react-native-parabolic": "^1.1.2",
     "react-native-range-slider": "^0.1.2",

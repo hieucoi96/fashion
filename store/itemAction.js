@@ -9,6 +9,7 @@ import {
   CHANGE_INFO,
   ADD_USER_INFO,
   UPDATE_DELIVERY,
+  CLEAR_CART,
 } from "./itemTypes";
 export const addItem = (item) => ({
   type: ADD_ITEM,
@@ -69,4 +70,7 @@ export const updateCart = (cart) => ({
 export const updateDelivery = (deliveryList) => ({
   type: UPDATE_DELIVERY,
   payload: deliveryList,
+});
+export const clearCart = () => ({
+  type: CLEAR_CART,
 });

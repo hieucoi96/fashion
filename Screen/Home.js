@@ -13,6 +13,7 @@ import {
 import NumberFormat from "react-number-format";
 import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
+import { useIsFocused } from "@react-navigation/native";
 
 const ItemHorizontal = ({ item, onPress, backgroundColor, textColor }) => (
   <TouchableOpacity
@@ -48,11 +49,12 @@ const ItemVertical = ({ item, onPress, backgroundColor, textColor }) => (
 );
 
 const Home = ({ navigation, route }) => {
-  const { phone_number, token } = route.params ?? {};
+  // const { phone_number, token } = route.params ?? {};
   const [horizontalList, setHorizontalList] = useState(null);
   const [verticalList, setVerticalList] = useState(null);
   const [loading, setLoading] = useState(false);
-  const userInfo = useSelector((state) => state.userReducer);
+  const token = useSelector((state) => state.userReducer.token);
+  const isFocused = useIsFocused();
   // console.log("Home user info: ", userInfo);
 
   const instance = axios.create({
@@ -79,7 +81,7 @@ const Home = ({ navigation, route }) => {
       .then(function () {
         setLoading(false);
       });
-  }, []);
+  }, [isFocused]);
 
   function openProductDetails(item) {
     navigation.navigate("ProductDetails", { item, token });

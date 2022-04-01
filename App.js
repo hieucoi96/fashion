@@ -513,7 +513,14 @@ export default function App() {
                 headerLeft: () => (
                   <TouchableOpacity
                     style={{ padding: 15 }}
-                    onPress={() => navigation.goBack()}
+                    onPress={() =>
+                      navigation.replace("MainStack", {
+                        screen: "Personal",
+                        params: {
+                          screen: "MyOrder",
+                        },
+                      })
+                    }
                     activeOpacity={1}
                   >
                     <Image

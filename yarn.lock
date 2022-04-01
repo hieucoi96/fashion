@@ -5340,6 +5340,13 @@ react-native-material-ripple@^0.9.1:
   dependencies:
     prop-types "^15.5.10"
 
+react-native-momosdk@^1.4.3:
+  version "1.4.3"
+  resolved "https://registry.yarnpkg.com/react-native-momosdk/-/react-native-momosdk-1.4.3.tgz#c8a8dcd216f8991a855f084ef0a4d2735abd6d02"
+  integrity sha512-bsQSZj7QFiEZmzWz8P+NZHapTrKnwGQ9IKDII6g6C04AC7OOnu+w33FwEWF4iMtjj483jxtssDURQTn0a4FFYw==
+  dependencies:
+    react-timer-mixin "^0.13.4"
+
 react-native-paper@^4.9.1:
   version "4.11.2"
   resolved "https://registry.yarnpkg.com/react-native-paper/-/react-native-paper-4.11.2.tgz#4ae73282da9be3bf20760c609d3273643d1dd4a9"
