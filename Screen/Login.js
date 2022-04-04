@@ -61,7 +61,7 @@ const Login = ({ navigation }) => {
   return (
     <View style={styles.container}>
       <Text style={styles.brand}>fasions.</Text>
-      <Text style={styles.title}>Đăng nhập với email của bạn</Text>
+      <Text style={styles.title}>Đăng nhập với số điện thoại của bạn</Text>
 
       <View style={styles.input_container}>
         <View style={styles.inputSection}>

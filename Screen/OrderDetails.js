@@ -14,6 +14,7 @@ import { AntDesign, EvilIcons } from "@expo/vector-icons";
 
 const OrderDetails = ({ route, navigation }) => {
   const { bill } = route.params;
+  const shipFee = bill.delivery_value ? bill.delivery_value : 40000;
 
   const getColor = (status) => {
     let color;
@@ -28,6 +29,14 @@ const OrderDetails = ({ route, navigation }) => {
     }
     return color;
   };
+
+  const sumProduct = bill.product.reduce(function (prev, current) {
+    return prev + current.quantity;
+  }, 0);
+
+  const sumValue = bill.product.reduce(function (prev, current) {
+    return prev + current.price * current.quantity;
+  }, 0);
 
   return (
     <View style={styles.container}>
@@ -53,7 +62,7 @@ const OrderDetails = ({ route, navigation }) => {
             </Text>
           </View>
           <Text style={[styles.text_normal, { marginTop: 5 }]}>
-            {moment(bill.datetime).format("HH:mm DD-MM-YYYY")}
+            {moment(bill.date_created).format("HH:mm DD-MM-YYYY")}
           </Text>
           <Text
             style={[styles.text_normal, { marginTop: 15, fontWeight: "bold" }]}
@@ -103,19 +112,23 @@ const OrderDetails = ({ route, navigation }) => {
                     >
                       {item.status}
                     </Text>
-                    {bill.status === "Đã hoàn thành" && (
-                      <TouchableOpacity
-                        style={{ paddingBottom: 15, paddingLeft: 15 }}
-                        onPress={() =>
-                          navigation.navigate("Review", { id: item.id })
-                        }
-                      >
-                        <Image
-                          style={{ width: 18, height: 16 }}
-                          source={require("../assets/icon_feedback.png")}
-                        />
-                      </TouchableOpacity>
-                    )}
+                    {bill.status === "Đã hoàn thành" &&
+                      item.evaluated === false && (
+                        <TouchableOpacity
+                          style={{ paddingBottom: 15, paddingLeft: 15 }}
+                          onPress={() =>
+                            navigation.navigate("Review", {
+                              bill_id: bill.bill_id,
+                              item,
+                            })
+                          }
+                        >
+                          <Image
+                            style={{ width: 18, height: 16 }}
+                            source={require("../assets/icon_feedback.png")}
+                          />
+                        </TouchableOpacity>
+                      )}
                   </View>
                   <Text style={styles.text_normal}>{item.name}</Text>
                   <Text style={[styles.text_small, { marginTop: 1 }]}>
@@ -152,10 +165,10 @@ const OrderDetails = ({ route, navigation }) => {
       <View style={styles.bottom_container}>
         <View style={{ marginTop: 20, flexDirection: "row" }}>
           <Text style={[styles.text_normal, { flex: 1 }]}>
-            Tạm tính ({bill.total_product} sản phẩm)
+            Tạm tính ({sumProduct} sản phẩm)
           </Text>
           <NumberFormat
-            value={bill.total_value}
+            value={sumValue}
             displayType={"text"}
             thousandSeparator={true}
             suffix={" đ"}
@@ -169,7 +182,7 @@ const OrderDetails = ({ route, navigation }) => {
         <View style={{ marginTop: 5, flexDirection: "row" }}>
           <Text style={[styles.text_normal, { flex: 1 }]}>Phí giao hàng</Text>
           <NumberFormat
-            value={bill.delivery_value ? bill.delivery_value : 30000}
+            value={shipFee}
             displayType={"text"}
             thousandSeparator={true}
             suffix={" đ"}
@@ -180,7 +193,7 @@ const OrderDetails = ({ route, navigation }) => {
             )}
           />
         </View>
-        {bill.sale_value > 0 && (
+        {bill.discount_value > 0 && (
           <View
             style={{ marginTop: 5, flexDirection: "row", alignItems: "center" }}
           >
@@ -188,7 +201,7 @@ const OrderDetails = ({ route, navigation }) => {
               Khuyến mãi
             </Text>
             <NumberFormat
-              value={bill.sale_value}
+              value={bill.discount_value}
               displayType={"text"}
               thousandSeparator={true}
               suffix={" đ"}
@@ -206,7 +219,7 @@ const OrderDetails = ({ route, navigation }) => {
         <View style={{ marginTop: 5, flexDirection: "row" }}>
           <Text style={[styles.text_normal, { flex: 1 }]}>Thành tiền</Text>
           <NumberFormat
-            value={bill.final_value}
+            value={sumValue + shipFee - bill.discount_value}
             displayType={"text"}
             thousandSeparator={true}
             suffix={" đ"}

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import {
   StyleSheet,
   TextInput,
@@ -8,6 +8,9 @@ import {
   Image,
   StatusBar,
   Animated,
+  FlatList,
+  Text,
+  ActivityIndicator,
 } from "react-native";
 import {
   NavigationContainer,
@@ -19,6 +22,8 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { AntDesign } from "@expo/vector-icons";
 import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
 import FlashMessage from "react-native-flash-message";
+import { useDispatch, useSelector } from "react-redux";
+import axios from "axios";
 
 import { LogBox } from "react-native";
 LogBox.ignoreLogs(["Reanimated 2"]);
@@ -56,6 +61,7 @@ import { Provider } from "react-redux";
 import store from "./store/store";
 import ShoppingCartIcon from "./Component/ShoppingCartIcon";
 import BackButton from "./Component/BackButton";
+import { useNavigation } from "@react-navigation/native";
 
 const Stack = createStackNavigator();
 const TabHome = createBottomTabNavigator();
@@ -126,7 +132,7 @@ function PersonalStack() {
           headerLeft: () => (
             <TouchableOpacity
               style={{ padding: 15 }}
-              onPress={() => navigation.goBack()}
+              onPress={() => navigation.navigate("Personal")}
               activeOpacity={1}
             >
               <Image
@@ -181,6 +187,37 @@ function PersonalStack() {
 
 function GenderStack() {
   const [searchText, setSearchText] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [data, setData] = useState([]);
+  const navigation = useNavigation();
+  const timerRef = useRef();
+  const token = useSelector((state) => state.userReducer.token);
+  const instance = axios.create({
+    baseURL: "https://hieuhmph12287-lab5.herokuapp.com/",
+    headers: { "x-access-token": token },
+  });
+
+  useEffect(() => {
+    setLoading(true);
+    timerRef.current = setTimeout(() => {
+      console.log("Calling Api....", searchText);
+      if (searchText) {
+        console.log("ygdiufywefiuyew");
+        instance
+          .post("/products/searchProducts/" + searchText)
+          .then(function (response) {
+            console.log("Res:", response.data);
+            setData(response.data);
+          })
+          .catch(function (error) {
+            console.log(error);
+          })
+          .then(function () {
+            setLoading(false);
+          });
+      }
+    }, 1000);
+  }, [searchText]);
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: "#ffffff" }}>
@@ -193,16 +230,77 @@ function GenderStack() {
         />
         <TextInput
           style={styles.input}
-          onChangeText={(text) => setSearchText(text)}
+          onChangeText={(text) => {
+            clearTimeout(timerRef.current);
+            setSearchText(text);
+          }}
           value={searchText}
           placeholder="Tìm kiếm sản phẩm"
           placeholderTextColor="#AEAEB2"
         />
       </View>
-      <TabGender.Navigator>
-        <TabGender.Screen name="Female" component={Female} />
-        <TabGender.Screen name="Male" component={Male} />
-      </TabGender.Navigator>
+      {searchText ? (
+        <View
+          style={{
+            borderWidth: 1,
+            borderColor: "#8F9190",
+            borderTopWidth: 0,
+            marginHorizontal: 8,
+          }}
+        >
+          {loading ? (
+            <View style={{ height: 55, justifyContent: "center" }}>
+              <ActivityIndicator size="small" color={"#000000"} />
+            </View>
+          ) : (
+            <>
+              {data.length > 0 ? (
+                <FlatList
+                  style={{}}
+                  data={data}
+                  renderItem={({ item, index }) => (
+                    <TouchableOpacity
+                      style={{
+                        // paddingBottom: 15,
+                        marginHorizontal: 4,
+                        borderBottomWidth: 0.5,
+                        borderColor: "#DADADA",
+                        paddingHorizontal: 6,
+                      }}
+                      onPress={() =>
+                        navigation.navigate("ProductDetails", { item: item })
+                      }
+                      activeOpacity={0.8}
+                    >
+                      <Text style={{ lineHeight: 55 }}>{item.name}</Text>
+                    </TouchableOpacity>
+                  )}
+                  keyExtractor={(item) => item.product_id}
+                  numColumns={1}
+                  showsVerticalScrollIndicator={false}
+                />
+              ) : (
+                <View
+                  style={{
+                    height: 55,
+                    alignItems: "center",
+                    justifyContent: "center",
+                  }}
+                >
+                  <Text style={{ color: "#8F9190" }}>
+                    Không tìm thấy sản phẩm nào
+                  </Text>
+                </View>
+              )}
+            </>
+          )}
+        </View>
+      ) : (
+        <TabGender.Navigator>
+          <TabGender.Screen name="Female" component={Female} />
+          <TabGender.Screen name="Male" component={Male} />
+        </TabGender.Navigator>
+      )}
     </SafeAreaView>
   );
 }
@@ -210,6 +308,7 @@ function GenderStack() {
 function SearchStack() {
   return (
     <Stack.Navigator
+      initialRouteName="GenderStack"
       screenOptions={{
         headerBackTitleVisible: false,
         headerBackImage: () => <BackButton />,
@@ -307,6 +406,12 @@ function MainStack() {
             />
           ),
         }}
+        listeners={({ navigation }) => ({
+          tabPress: (e) => {
+            // e.preventDefault();
+            // navigation.navigate("GenderStack");
+          },
+        })}
       />
       <TabHome.Screen
         name="Favorite"

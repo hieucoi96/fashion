@@ -18,19 +18,10 @@ import { useDispatch, useSelector } from "react-redux";
 import axios from "axios";
 import { clearCart } from "../store/itemAction";
 
-// import RNMomosdk from "react-native-momosdk";
-
-// const merchantname = "CGV Cinemas";
-// const merchantcode = "CGV01";
-// const merchantNameLabel = "Nhà cung cấp";
-// const billdescription = "Fast and Furious 8";
-// const amount = 50000;
-// const enviroment = "0"; //"0": SANBOX , "1": PRODUCTION
-
 const Payment = ({ route, navigation }) => {
   const { data, item, total_value, total_product } = route.params;
   const [value, setValue] = useState("cash");
-  const [delivery_value, setDelivery] = useState(20000);
+  const [delivery_value, setDelivery] = useState(40000);
   const [sale_value, setSale] = useState({ discount_id: null, value: null });
   const [discountCode, setDiscountCode] = useState("");
   const [loading, setLoading] = useState(false);
@@ -102,46 +93,6 @@ const Payment = ({ route, navigation }) => {
       setSale({ discount_id: null, value: null });
     }
   };
-
-  // const onPress = async () => {
-  //   let jsonData = {};
-  //   jsonData.enviroment = enviroment; //SANBOX OR PRODUCTION
-  //   jsonData.action = "gettoken"; //DO NOT EDIT
-  //   jsonData.merchantname = merchantname; //edit your merchantname here
-  //   jsonData.merchantcode = merchantcode; //edit your merchantcode here
-  //   jsonData.merchantnamelabel = merchantNameLabel;
-  //   jsonData.description = billdescription;
-  //   jsonData.amount = 5000; //order total amount
-  //   jsonData.orderId = "ID20181123192300";
-  //   jsonData.orderLabel = "Ma don hang";
-  //   jsonData.appScheme = "momocgv20170101"; // iOS App Only , match with Schemes Indentify from your  Info.plist > key URL types > URL Schemes
-  //   console.log("data_request_payment " + JSON.stringify(jsonData));
-  //   console.log("SDK: ", RNMomosdk.requestPayment(jsonData));
-  //   let dataPayment = await RNMomosdk.requestPayment(jsonData);
-  //   momoHandleResponse(dataPayment);
-  //   // if (Platform.OS === "android") {
-  //   //   let dataPayment = await RNMomosdk.requestPayment(jsonData);
-
-  //   // } else {
-  //   //   RNMomosdk.requestPayment(jsonData);
-  //   // }
-  // };
-
-  // const momoHandleResponse = async (response) => {
-  //   console.log("momoHandleResponse ==== ", response);
-  //   try {
-  //     if (response && response.status == 0) {
-  //       //SUCCESS continue to submit momoToken,phonenumber to server
-  //       let fromapp = response.fromapp; //ALWAYS:: fromapp == momotransfer
-  //       let momoToken = response.data;
-  //       let phonenumber = response.phonenumber;
-  //       let message = response.message;
-  //     } else {
-  //       //let message = response.message;
-  //       //Has Error: show message here
-  //     }
-  //   } catch (ex) {}
-  // };
 
   return (
     <ScrollView
@@ -422,7 +373,7 @@ const Payment = ({ route, navigation }) => {
                       navigation.navigate("OrderDetails", {
                         bill: {
                           bill_id: response.data.bill_id,
-                          datetime: response.data.date_created,
+                          date_created: response.data.date_created,
                           name_receiver: item.name_receiver,
                           phone_receiver: item.phone_receiver,
                           city: item.city,
@@ -430,12 +381,11 @@ const Payment = ({ route, navigation }) => {
                           sub_district: item.sub_district,
                           address_detail: item.address_detail,
                           address: item.address,
-                          sale_value: sale_value.value,
+                          discount_value: sale_value.value,
                           delivery_value: delivery_value,
                           total_value: total_value,
                           final_value:
                             total_value + delivery_value - sale_value.value,
-                          total_product: total_product,
                           product: data,
                           status: response.data.status,
                         },

@@ -58,7 +58,7 @@ const Cart = ({ navigation }) => {
 
   useEffect(() => {
     let sumProduct = data.reduce(function (prev, current) {
-      return prev + +current.quantity;
+      return prev + current.quantity;
     }, 0);
     setTotalProduct(sumProduct);
     let sumValue = data.reduce(function (prev, current) {

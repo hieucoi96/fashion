@@ -11,13 +11,11 @@ import {
 } from "react-native";
 import NumberFormat from "react-number-format";
 import { AntDesign } from "@expo/vector-icons";
-import { DATA_BILL } from "../api/constants";
 import axios from "axios";
 import moment from "moment";
 import { useDispatch, useSelector } from "react-redux";
 import { useIsFocused } from "@react-navigation/native";
 
-const bill_data = DATA_BILL;
 const MyOrder = ({ navigation }) => {
   const token = useSelector((state) => state.userReducer.token);
   const instance = axios.create({
@@ -113,7 +111,9 @@ const MyOrder = ({ navigation }) => {
                       item.product.reduce(
                         (n, { price, quantity }) => n + price * quantity,
                         0
-                      ) - item.discount_value
+                      ) -
+                      item.discount_value +
+                      40000
                     }
                     displayType={"text"}
                     thousandSeparator={true}
