@@ -10,6 +10,7 @@ import {
   FlatList,
   Animated,
   ActivityIndicator,
+  LogBox,
 } from "react-native";
 
 import Carousel, {
@@ -92,6 +93,10 @@ const ProductDetails = ({ route, navigation }) => {
     headers: { "x-access-token": token },
     timeout: 1000,
   });
+
+  useEffect(() => {
+    LogBox.ignoreLogs(["VirtualizedLists should never be nested"]);
+  }, []);
 
   useEffect(() => {
     navigation.setOptions({
@@ -439,6 +444,7 @@ const ProductDetails = ({ route, navigation }) => {
         [{ nativeEvent: { contentOffset: { y: yOffset } } }],
         { useNativeDriver: true }
       )}
+      vertical
     >
       <View style={styles.container}>
         <View>
@@ -608,7 +614,7 @@ const ProductDetails = ({ route, navigation }) => {
             onChange={updateSection}
             underlayColor={"transparent"}
             expandMultiple={true}
-            renderAsFlatList={true}
+            renderAsFlatList={false}
             keyExtractor={(item) => item.title}
           />
         </View>

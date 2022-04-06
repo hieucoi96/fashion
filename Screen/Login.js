@@ -14,11 +14,15 @@ import axios from "axios";
 import { useDispatch } from "react-redux";
 import { addUserInfo } from "../store/itemAction";
 
-const Login = ({ navigation }) => {
+const Login = ({ navigation, notifyToken }) => {
   const dispatch = useDispatch();
   const [phone_number, setPhone] = useState("0977052703");
   const [password, setPassword] = useState("1");
   const [loading, setLoading] = useState(false);
+
+  if (!notifyToken) {
+    console.log("Can't get notifyToken: ", notifyToken);
+  }
 
   const instance = axios.create({
     baseURL: "https://hieuhmph12287-lab5.herokuapp.com/",
@@ -40,6 +44,7 @@ const Login = ({ navigation }) => {
       .post("/users/loginUser", {
         phone_number,
         password,
+        notifyToken,
       })
       .then(function (response) {
         const token = response.data.token;

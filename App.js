@@ -7,7 +7,6 @@ import {
   SafeAreaView,
   Image,
   StatusBar,
-  Animated,
   FlatList,
   Text,
   ActivityIndicator,
@@ -22,8 +21,9 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { AntDesign } from "@expo/vector-icons";
 import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
 import FlashMessage from "react-native-flash-message";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import axios from "axios";
+import * as Device from "expo-device";
 
 import { LogBox } from "react-native";
 LogBox.ignoreLogs(["Reanimated 2"]);
@@ -63,9 +63,19 @@ import ShoppingCartIcon from "./Component/ShoppingCartIcon";
 import BackButton from "./Component/BackButton";
 import { useNavigation } from "@react-navigation/native";
 
+import * as Notifications from "expo-notifications";
+
 const Stack = createStackNavigator();
 const TabHome = createBottomTabNavigator();
 const TabGender = createMaterialTopTabNavigator();
+
+Notifications.setNotificationHandler({
+  handleNotification: async () => ({
+    shouldShowAlert: true,
+    shouldPlaySound: true,
+    shouldSetBadge: false,
+  }),
+});
 
 function getHeaderTitle(route) {
   const routeName = getFocusedRouteNameFromRoute(route) ?? "fasions.";
@@ -436,7 +446,72 @@ function MainStack() {
 }
 
 export default function App() {
-  const scrollY = new Animated.Value(0);
+  const [expoPushToken, setExpoPushToken] = useState("");
+  const [notification, setNotification] = useState(false);
+  const notificationListener = useRef();
+  const responseListener = useRef();
+
+  useEffect(() => {
+    registerForPushNotificationsAsync().then((token) =>
+      setExpoPushToken(token)
+    );
+
+    // This listener is fired whenever a notification is received while the app is foregrounded
+    notificationListener.current = Notifications.addNotificationReceivedListener(
+      (notification) => {
+        setNotification(notification);
+        console.log("Noti: ", notification);
+      }
+    );
+
+    // This listener is fired whenever a user taps on or interacts with a notification (works when app is foregrounded, backgrounded, or killed)
+    responseListener.current = Notifications.addNotificationResponseReceivedListener(
+      (response) => {
+        console.log(response);
+      }
+    );
+
+    return () => {
+      Notifications.removeNotificationSubscription(
+        notificationListener.current
+      );
+      Notifications.removeNotificationSubscription(responseListener.current);
+    };
+  }, []);
+
+  async function registerForPushNotificationsAsync() {
+    let token;
+    if (Device.isDevice) {
+      const {
+        status: existingStatus,
+      } = await Notifications.getPermissionsAsync();
+      let finalStatus = existingStatus;
+      if (existingStatus !== "granted") {
+        const { status } = await Notifications.requestPermissionsAsync();
+        finalStatus = status;
+      }
+      if (finalStatus !== "granted") {
+        alert("Failed to get push token for push notification!");
+        return;
+      }
+      token = (await Notifications.getExpoPushTokenAsync()).data;
+      console.log(token);
+    } else {
+      alert("Must use physical device for Push Notifications");
+    }
+
+    if (Platform.OS === "android") {
+      Notifications.setNotificationChannelAsync("default", {
+        name: "default",
+        importance: Notifications.AndroidImportance.MAX,
+        vibrationPattern: [0, 250, 250, 250],
+        lightColor: "#FF231F7C",
+      });
+    }
+
+    return token;
+  }
+
   return (
     <Provider store={store}>
       <View style={styles.container}>
@@ -456,11 +531,13 @@ export default function App() {
             />
             <Stack.Screen
               name={"Login"}
-              component={Login}
+              // component={Login}
               options={{
                 headerShown: false,
               }}
-            />
+            >
+              {(props) => <Login {...props} notifyToken={expoPushToken} />}
+            </Stack.Screen>
             <Stack.Screen
               name={"Register"}
               component={Register}
@@ -527,7 +604,7 @@ export default function App() {
                 ),
               })}
             >
-              {(props) => <ProductDetails {...props} scrollY={scrollY} />}
+              {(props) => <ProductDetails {...props} />}
             </Stack.Screen>
             <Stack.Screen
               name={"Cart"}

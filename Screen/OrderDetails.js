@@ -158,7 +158,7 @@ const OrderDetails = ({ route, navigation }) => {
               </View>
             </TouchableOpacity>
           )}
-          keyExtractor={(item) => item.key}
+          keyExtractor={(item) => item.item_bought_id}
           showsVerticalScrollIndicator={false}
         />
       </View>

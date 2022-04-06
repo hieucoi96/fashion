@@ -58,6 +58,7 @@ const Payment = ({ route, navigation }) => {
     (item, index) =>
       index < 3 && (
         <Image
+          key={item.variant_id}
           source={{ uri: item.src }}
           style={{ width: "30%", height: 139, marginRight: 5 }}
         />

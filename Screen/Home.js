@@ -138,7 +138,7 @@ const Home = ({ navigation, route }) => {
           <FlatList
             data={verticalList}
             renderItem={renderItemVertical}
-            keyExtractor={(item) => item.product_id}
+            keyExtractor={(item) => item.collection_id}
             showsVerticalScrollIndicator={false}
             ListHeaderComponent={
               <View style={{ marginLeft: "4%", marginBottom: 25 }}>
