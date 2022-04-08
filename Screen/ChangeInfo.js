@@ -35,6 +35,7 @@ const ChangeInfo = ({ route, navigation }) => {
     userInfos.sub_district ? userInfos.sub_district : ""
   );
   const [loading, setLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
 
   const instance = axios.create({
     baseURL: "https://hieuhmph12287-lab5.herokuapp.com/",
@@ -137,6 +138,17 @@ const ChangeInfo = ({ route, navigation }) => {
   }
 
   const updateUserInfos = () => {
+    setErrorMessage("");
+    let name_regex = /^[a-zA-Z]+(([\'\,\.\- ][a-zA-Z ])?[a-zA-Z]*)*$/;
+    if (!name_regex.test(fullName)) {
+      setErrorMessage("Họ tên không hợp lệ");
+      return;
+    }
+    let email_regex = /^((([!#$%&'*+\-/=?^_`{|}~\w])|([!#$%&'*+\-/=?^_`{|}~\w][!#$%&'*+\-/=?^_`{|}~\.\w]{0,}[!#$%&'*+\-/=?^_`{|}~\w]))[@]\w+([-.]\w+)*\.\w+([-.]\w+)*)$/;
+    if (!email_regex.test(email)) {
+      setErrorMessage("Email không hợp lệ");
+      return;
+    }
     setLoading(true);
     instance
       .post("/users/changeUserInfos", {
@@ -203,7 +215,22 @@ const ChangeInfo = ({ route, navigation }) => {
             placeholder="Địa chỉ chi tiết "
             placeholderTextColor="#636366"
           />
+          {errorMessage ? (
+            <Text
+              style={{
+                color: "red",
+                fontSize: 12,
+                opacity: 0.7,
+                paddingLeft: 4,
+                marginTop: 16,
+                alignSelf: "flex-start",
+              }}
+            >
+              {errorMessage}
+            </Text>
+          ) : null}
         </View>
+
         {/*<TouchableOpacity style = {styles.button}*/}
         {/*                  onPress = {() => {navigation.navigate("MainStack")}}*/}
         {/*                  activeOpacity={0.8}>*/}

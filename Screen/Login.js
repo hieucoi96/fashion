@@ -17,8 +17,9 @@ import { addUserInfo } from "../store/itemAction";
 const Login = ({ navigation, notifyToken }) => {
   const dispatch = useDispatch();
   const [phone_number, setPhone] = useState("0977052703");
-  const [password, setPassword] = useState("1");
+  const [password, setPassword] = useState("12345678");
   const [loading, setLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
 
   if (!notifyToken) {
     console.log("Can't get notifyToken: ", notifyToken);
@@ -39,6 +40,18 @@ const Login = ({ navigation, notifyToken }) => {
   }
 
   const userLogin = () => {
+    setErrorMessage("");
+    let phone_regex = /(0[3|5|7|8|9])+([0-9]{8})\b/;
+    if (!phone_regex.test(phone_number)) {
+      setErrorMessage("Số điện thoại không hợp lệ");
+      return;
+    }
+    let password_regex = /^([a-zA-Z0-9@*#]{8,15})$/;
+    if (!password_regex.test(password)) {
+      setErrorMessage("Mật khẩu không hợp lệ");
+      return;
+    }
+
     setLoading(true);
     instance
       .post("/users/loginUser", {
@@ -99,6 +112,19 @@ const Login = ({ navigation, notifyToken }) => {
         >
           <Text style={styles.text_change_pass}>Quên mật khẩu</Text>
         </TouchableOpacity>
+        {errorMessage ? (
+          <Text
+            style={{
+              color: "red",
+              fontSize: 12,
+              opacity: 0.7,
+              paddingLeft: 4,
+              marginTop: 8,
+            }}
+          >
+            {errorMessage}
+          </Text>
+        ) : null}
       </View>
 
       <Ripple
@@ -208,7 +234,7 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     alignItems: "center",
     justifyContent: "center",
-    marginTop: 41,
+    marginTop: 36,
   },
   button_container: {
     marginTop: 33,

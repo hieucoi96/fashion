@@ -29,6 +29,7 @@ const AddAddress = ({ route, navigation }) => {
   const [district, setDistrict] = useState("");
   const [ward, setWard] = useState("");
   const [loading, setLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
 
   const listInputAddress = [
     { placeholder: "Tỉnh/Thành Phố", value: city },
@@ -182,10 +183,34 @@ const AddAddress = ({ route, navigation }) => {
             value={isEnabled}
           />
         </View>
+        {errorMessage ? (
+          <Text
+            style={{
+              color: "red",
+              fontSize: 12,
+              opacity: 0.7,
+              paddingLeft: 4,
+              marginTop: 0,
+            }}
+          >
+            {errorMessage}
+          </Text>
+        ) : null}
       </View>
       <TouchableOpacity
         style={styles.button_confirm}
         onPress={() => {
+          setErrorMessage("");
+          let name_regex = /^[a-zA-Z]+(([\'\,\.\- ][a-zA-Z ])?[a-zA-Z]*)*$/;
+          if (!name_regex.test(fullName)) {
+            setErrorMessage("Họ tên không hợp lệ");
+            return;
+          }
+          let phone_regex = /(0[3|5|7|8|9])+([0-9]{8})\b/;
+          if (!phone_regex.test(phone_number)) {
+            setErrorMessage("Số điện thoại không hợp lệ");
+            return;
+          }
           setLoading(true);
           instance
             .post("/users/addDeliveryAddress", {
