@@ -162,11 +162,11 @@ const Cart = ({ navigation }) => {
               quantity: 0,
             })
             .then(function (response) {
-              console.log("Res:", response.data);
               dispatch(deleteItem(key));
             })
             .catch(function (error) {
               console.log(error);
+              Alert.alert("Thông báo", "Có lỗi xảy ra: " + error.message);
             })
             .then(function () {
               setLoading(false);
@@ -315,7 +315,6 @@ const Cart = ({ navigation }) => {
                       selectedItem.variant[i].color === selectedTemp.color &&
                       selectedItem.variant[i].size === selectedSize
                     ) {
-                      console.log(selectedItem.variant[i].variant_id);
                       variant_id = selectedItem.variant[i].variant_id;
                     }
                   }
@@ -327,7 +326,6 @@ const Cart = ({ navigation }) => {
                       _id: selectedItem.key,
                     })
                     .then(function (response) {
-                      console.log("Res change cart: ", response.data);
                       dispatch(
                         changeInfo(
                           selectedItem.key,
@@ -454,11 +452,14 @@ const Cart = ({ navigation }) => {
                           quantity: -1,
                         })
                         .then(function (response) {
-                          console.log("Res:", response.data);
                           dispatch(decreaseQuantity(item));
                         })
                         .catch(function (error) {
                           console.log(error);
+                          Alert.alert(
+                            "Thông báo",
+                            "Có lỗi xảy ra: " + error.message
+                          );
                         })
                         .then(function () {
                           setLoading(false);
@@ -486,11 +487,14 @@ const Cart = ({ navigation }) => {
                           quantity: 1,
                         })
                         .then(function (response) {
-                          console.log("Res:", response.data);
                           dispatch(increaseQuantity(item));
                         })
                         .catch(function (error) {
                           console.log(error);
+                          Alert.alert(
+                            "Thông báo",
+                            "Có lỗi xảy ra: " + error.message
+                          );
                         })
                         .then(function () {
                           setLoading(false);

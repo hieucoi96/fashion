@@ -77,7 +77,6 @@ const Payment = ({ route, navigation }) => {
       instance
         .get("/discounts/checkDiscounts/" + discountCode)
         .then(function (response) {
-          console.log("Res:", response.data);
           setSale(response.data);
           Alert.alert("Thông báo", "Mã khuyến mại đã được áp dụng!");
         })
@@ -365,7 +364,6 @@ const Payment = ({ route, navigation }) => {
                   product,
                 })
                 .then(function (response) {
-                  console.log("Res:", response.data);
                   setModalVisible(true);
                   dispatch(clearCart());
                   timerRef.current = setTimeout(function () {
@@ -397,9 +395,7 @@ const Payment = ({ route, navigation }) => {
                 })
                 .catch(function (error) {
                   console.log(error.response);
-                  // if (error.response.status === 409) {
-                  //   Alert.alert("Thông báo", "Mã khuyến mại không hợp lệ!");
-                  // }
+                  Alert.alert("Thông báo", "Có lỗi xảy ra: " + error.message);
                 })
                 .then(function () {
                   setOrderLoading(false);

@@ -8,6 +8,7 @@ import {
   TextInput,
   KeyboardAvoidingView,
   ActivityIndicator,
+  Alert,
 } from "react-native";
 import { EvilIcons } from "@expo/vector-icons";
 import { showMessage } from "react-native-flash-message";
@@ -197,12 +198,12 @@ const AddAddress = ({ route, navigation }) => {
               name_receiver: fullName,
             })
             .then(function (response) {
-              console.log("Res:", response.data);
               dispatch(updateDelivery(response.data));
               navigation.navigate("Delivery");
             })
             .catch(function (error) {
               console.log(error);
+              Alert.alert("Thông báo", "Có lỗi xảy ra: " + error.message);
             })
             .then(function () {
               setLoading(false);

@@ -10,6 +10,7 @@ import {
   TouchableOpacity,
   SafeAreaView,
   ActivityIndicator,
+  Alert,
 } from "react-native";
 import NumberFormat from "react-number-format";
 import { useDispatch, useSelector } from "react-redux";
@@ -93,15 +94,9 @@ const Favorite = ({ navigation }) => {
       .post("products/getFavoriteProducts", { product_ids: fav_product_list })
       .then(function (response) {
         setListProduct(response.data);
-        //   Alert.alert("Thông báo", "Đổi mật khẩu thành công!", [
-        //     { text: "OK", onPress: () => navigation.navigate("Login") },
-        //   ]);
       })
       .catch(function (error) {
-        //   Alert.alert(
-        //     "Thông báo",
-        //     "Đổi mật khẩu không thành công: " + error.message
-        //   );
+        Alert.alert("Thông báo", "Có lỗi xảy ra: " + error.message);
         console.log(error);
       })
       .then(function () {
@@ -118,8 +113,8 @@ const Favorite = ({ navigation }) => {
             .get("/users/addFavorite/" + item.product_id)
             .then(function (response) {})
             .catch(function (error) {
-              // Alert.alert("Thông báo", "Đăng nhập không thành công!");
               console.log(error);
+              Alert.alert("Thông báo", "Có lỗi xảy ra: " + error.message);
             });
 
           dispatch(changeFav(item.product_id));

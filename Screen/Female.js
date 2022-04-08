@@ -61,6 +61,10 @@ const Item = ({ item, onPress, navigation, textColor }) => (
         prevScreen: "Gender",
         type: item.name,
         gender: "Female",
+        collection_id: null,
+        low: null,
+        high: null,
+        size: null,
       })
     }
     activeOpacity={1}

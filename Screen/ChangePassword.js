@@ -9,13 +9,16 @@ import {
   Alert,
 } from "react-native";
 import { FirebaseRecaptchaVerifierModal } from "expo-firebase-recaptcha";
-import { initializeApp } from "firebase/app";
+import { initializeApp, getApps, getApp } from "firebase/app";
 import {
   getAuth,
   PhoneAuthProvider,
   signInWithCredential,
+  initializeAuth,
 } from "firebase/auth";
 import axios from "axios";
+import { getReactNativePersistence } from "firebase/auth/react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const firebaseConfig = {
   apiKey: "AIzaSyBssvdQ9W3xe5nnW-tjL8sIiXwOnBBCRfU",
@@ -27,8 +30,17 @@ const firebaseConfig = {
   measurementId: "G-56P8K2YF4Y",
 };
 
-const app = initializeApp(firebaseConfig);
-const auth = getAuth();
+let app;
+let auth;
+if (getApps().length < 1) {
+  app = initializeApp(firebaseConfig);
+  auth = initializeAuth(app, {
+    persistence: getReactNativePersistence(AsyncStorage),
+  });
+} else {
+  app = getApp();
+  auth = getAuth();
+}
 
 const ChangePassword = ({ navigation }) => {
   const recaptchaVerifier = useRef(null);
@@ -71,7 +83,7 @@ const ChangePassword = ({ navigation }) => {
           verificationId,
           currentInput
         );
-        console.log("credential: ", credential);
+
         await signInWithCredential(auth, credential);
         showMessage({
           text: "Mã xác nhận hợp lệ, vui lòng nhập mật khẩu mới!",
@@ -93,7 +105,6 @@ const ChangePassword = ({ navigation }) => {
           password: currentInput,
         })
         .then(function (response) {
-          console.log(response);
           setLoading(false);
           Alert.alert("Thông báo", "Đổi mật khẩu thành công!", [
             { text: "OK", onPress: () => navigation.navigate("Login") },

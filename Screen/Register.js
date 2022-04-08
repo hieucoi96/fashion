@@ -30,7 +30,6 @@ const Register = ({ navigation }) => {
         password,
       })
       .then(function (response) {
-        console.log("Status:", response.status);
         setLoading(false);
         Alert.alert("Thông báo", "Đăng ký tài khoản thành công!", [
           {

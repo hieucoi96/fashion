@@ -9,6 +9,7 @@ import {
   ScrollView,
   SafeAreaView,
   ActivityIndicator,
+  Alert,
 } from "react-native";
 import NumberFormat from "react-number-format";
 import axios from "axios";
@@ -49,13 +50,11 @@ const ItemVertical = ({ item, onPress, backgroundColor, textColor }) => (
 );
 
 const Home = ({ navigation, route }) => {
-  // const { phone_number, token } = route.params ?? {};
   const [horizontalList, setHorizontalList] = useState(null);
   const [verticalList, setVerticalList] = useState(null);
   const [loading, setLoading] = useState(false);
   const token = useSelector((state) => state.userReducer.token);
   const isFocused = useIsFocused();
-  // console.log("Home user info: ", userInfo);
 
   const instance = axios.create({
     baseURL: "https://hieuhmph12287-lab5.herokuapp.com/",
@@ -77,6 +76,7 @@ const Home = ({ navigation, route }) => {
       })
       .catch(function (error) {
         console.log(error);
+        Alert.alert("Thông báo", "Có lỗi xảy ra: " + error.message);
       })
       .then(function () {
         setLoading(false);
@@ -94,6 +94,11 @@ const Home = ({ navigation, route }) => {
         name: c.name,
         token,
         prevScreen: "Home",
+        gender: null,
+        type: null,
+        low: null,
+        high: null,
+        size: null,
       },
       screen: "ListProduct",
     });

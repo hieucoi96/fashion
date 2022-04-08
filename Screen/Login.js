@@ -48,7 +48,6 @@ const Login = ({ navigation, notifyToken }) => {
       })
       .then(function (response) {
         const token = response.data.token;
-        console.log("Res:", response.data);
         setLoading(false);
         dispatch(addUserInfo(response.data));
         navigation.navigate("MainStack", {

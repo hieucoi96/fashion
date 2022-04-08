@@ -9,18 +9,18 @@ import {
   TouchableOpacity,
   SafeAreaView,
   ActivityIndicator,
+  Alert,
 } from "react-native";
 import NumberFormat from "react-number-format";
 import { useDispatch, useSelector } from "react-redux";
 import { changeFav } from "../store/itemAction";
 import axios from "axios";
-import { DATA_PRODUCT } from "../api/constants";
 
 const heartOutline = require("../assets/icon_heart_outline.png");
 const heartFull = require("../assets/icon_heart_full.png");
 
 const ListProduct = ({ route, navigation }) => {
-  const { collection_id, type, gender } = route.params ?? {};
+  const { collection_id, type, gender, low, high, size } = route.params ?? {};
   const [loading, setLoading] = useState(false);
   const [listProduct, setListProduct] = useState(null);
   const token = useSelector((state) => state.userReducer.token);
@@ -34,18 +34,16 @@ const ListProduct = ({ route, navigation }) => {
     setLoading(true);
     if (collection_id) {
       instance
-        .get("products/getProducts/" + collection_id)
+        .get(
+          `products/getProducts/${collection_id}${low ? "&" + low : "&0"}${
+            high ? "&" + high : "&100000000"
+          }${size ? "&" + size : "&null"}`
+        )
         .then(function (response) {
           setListProduct(response.data);
-          //   Alert.alert("Thông báo", "Đổi mật khẩu thành công!", [
-          //     { text: "OK", onPress: () => navigation.navigate("Login") },
-          //   ]);
         })
         .catch(function (error) {
-          //   Alert.alert(
-          //     "Thông báo",
-          //     "Đổi mật khẩu không thành công: " + error.message
-          //   );
+          Alert.alert("Thông báo", "Có lỗi xảy ra: " + error.message);
           console.log(error);
         })
         .then(function () {
@@ -53,27 +51,23 @@ const ListProduct = ({ route, navigation }) => {
         });
     } else {
       instance
-        .get("products/getProducts/" + gender + "&" + type)
+        .get(
+          `products/getProducts/${gender}&${type}&${low ? low : "0"}&${
+            high ? high : "100000000"
+          }&${size ? size : "null"}`
+        )
         .then(function (response) {
           setListProduct(response.data);
-          //   Alert.alert("Thông báo", "Đổi mật khẩu thành công!", [
-          //     { text: "OK", onPress: () => navigation.navigate("Login") },
-          //   ]);
         })
         .catch(function (error) {
-          //   Alert.alert(
-          //     "Thông báo",
-          //     "Đổi mật khẩu không thành công: " + error.message
-          //   );
+          Alert.alert("Thông báo", "Có lỗi xảy ra: " + error.message);
           console.log(error);
         })
         .then(function () {
           setLoading(false);
         });
     }
-  }, [collection_id]);
-
-  let data = DATA_PRODUCT;
+  }, [collection_id, gender, type, low, high, size]);
 
   const [selectedView, setSelectedView] = useState("grid");
 
@@ -85,7 +79,7 @@ const ListProduct = ({ route, navigation }) => {
     }
   }
 
-  const Item = ({ item, addOrRemoveFav, favorite, textColor }) => {
+  const Item = ({ item }) => {
     const fav_product_list = useSelector((state) => state.userReducer.favorite);
     const dispatch = useDispatch();
 
@@ -109,7 +103,7 @@ const ListProduct = ({ route, navigation }) => {
                   .get("/users/addFavorite/" + item.product_id)
                   .then(function (response) {})
                   .catch(function (error) {
-                    // Alert.alert("Thông báo", "Đăng nhập không thành công!");
+                    Alert.alert("Thông báo", "Có lỗi xảy ra: " + error.message);
                     console.log(error);
                   });
 
@@ -203,16 +197,8 @@ const ListProduct = ({ route, navigation }) => {
     );
   };
 
-  const [favorite, setFavorite] = useState([]);
-
   const renderItem = ({ item }) => {
-    return (
-      <Item
-        item={item}
-        addOrRemoveFav={() => addOrRemoveFav(item.id)}
-        favorite={favorite}
-      />
-    );
+    return <Item item={item} />;
   };
 
   return (
@@ -226,14 +212,52 @@ const ListProduct = ({ route, navigation }) => {
           }}
         >
           <TouchableOpacity
-            onPress={() => navigation.navigate("FilterMenu")}
+            style={{ flexDirection: "row" }}
+            hitSlop={{ top: 15, left: 15, right: 15, bottom: 15 }}
+            onPress={() =>
+              navigation.navigate("FilterMenu", { size, low, high })
+            }
             activeOpacity={1}
           >
-            <Text style={styles.btn_filter}>Bộ lọc</Text>
+            <Text style={styles.btn_filter}>
+              Bộ lọc
+              {size ? ` ( size ${size} )` : ""}
+            </Text>
+            {low && (
+              <NumberFormat
+                value={low}
+                displayType={"text"}
+                thousandSeparator={true}
+                prefix={" ( từ "}
+                suffix={"đ đến "}
+                renderText={(value, props) => (
+                  <Text style={styles.btn_filter} {...props}>
+                    {value}
+                  </Text>
+                )}
+              />
+            )}
+            {high && (
+              <NumberFormat
+                value={high}
+                displayType={"text"}
+                thousandSeparator={true}
+                suffix={"đ )"}
+                renderText={(value, props) => (
+                  <Text style={styles.btn_filter} {...props}>
+                    {value}
+                  </Text>
+                )}
+              />
+            )}
           </TouchableOpacity>
         </View>
         <View
-          style={{ flexDirection: "row", flex: 1, justifyContent: "flex-end" }}
+          style={{
+            flexDirection: "row",
+            flex: 0.5,
+            justifyContent: "flex-end",
+          }}
         >
           <TouchableOpacity onPress={() => selectView()}>
             <Image

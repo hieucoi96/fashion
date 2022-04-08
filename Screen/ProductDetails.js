@@ -11,6 +11,7 @@ import {
   Animated,
   ActivityIndicator,
   LogBox,
+  Alert,
 } from "react-native";
 
 import Carousel, {
@@ -24,7 +25,7 @@ import { MaterialIcons } from "@expo/vector-icons";
 import { Rating } from "react-native-ratings";
 import Parabolic from "react-native-parabolic";
 import { useDispatch, useSelector } from "react-redux";
-import { addItem, changeFav } from "../store/itemAction";
+import { changeFav } from "../store/itemAction";
 import ShoppingCartIcon from "../Component/ShoppingCartIcon";
 import { showMessage } from "react-native-flash-message";
 import Ripple from "react-native-material-ripple";
@@ -36,7 +37,6 @@ import { addUserInfo } from "../store/itemAction";
 const heartOutline = require("../assets/icon_heart_outline.png");
 const heartFull = require("../assets/icon_heart_full.png");
 const windowWidth = Dimensions.get("screen").width;
-const windowHeight = Dimensions.get("screen").height;
 const { width: screenWidth, height: screenHeight } = Dimensions.get("window");
 
 const ProductDetails = ({ route, navigation }) => {
@@ -146,7 +146,7 @@ const ProductDetails = ({ route, navigation }) => {
         setRelatedProduct(response.data);
       })
       .catch(function (error) {
-        // Alert.alert("Thông báo", "Đăng nhập không thành công!");
+        Alert.alert("Thông báo", "Có lỗi xảy ra: " + error.message);
         console.log(error);
       })
       .then(function () {
@@ -226,7 +226,7 @@ const ProductDetails = ({ route, navigation }) => {
             .get("/users/addFavorite/" + item.product_id)
             .then(function (response) {})
             .catch(function (error) {
-              // Alert.alert("Thông báo", "Đăng nhập không thành công!");
+              Alert.alert("Thông báo", "Có lỗi xảy ra: " + error.message);
               console.log(error);
             });
           dispatch(changeFav(item.product_id));
@@ -336,11 +336,10 @@ const ProductDetails = ({ route, navigation }) => {
     instance
       .post("/users/addItemToCart", { variant_id: v_id, quantity: 1 })
       .then(function (response) {
-        console.log("Cart res: ", response.data);
         dispatch(addUserInfo(response.data));
       })
       .catch(function (error) {
-        // Alert.alert("Thông báo", "Đăng nhập không thành công!");
+        Alert.alert("Thông báo", "Có lỗi xảy ra: " + error.message);
         console.log(error);
       });
 
@@ -354,7 +353,7 @@ const ProductDetails = ({ route, navigation }) => {
       .get("/users/addFavorite/" + item.product_id)
       .then(function (response) {})
       .catch(function (error) {
-        // Alert.alert("Thông báo", "Đăng nhập không thành công!");
+        Alert.alert("Thông báo", "Có lỗi xảy ra: " + error.message);
         console.log(error);
       });
     dispatch(changeFav(item.product_id));

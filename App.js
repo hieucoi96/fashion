@@ -10,6 +10,7 @@ import {
   FlatList,
   Text,
   ActivityIndicator,
+  Alert,
 } from "react-native";
 import {
   NavigationContainer,
@@ -210,17 +211,14 @@ function GenderStack() {
   useEffect(() => {
     setLoading(true);
     timerRef.current = setTimeout(() => {
-      console.log("Calling Api....", searchText);
       if (searchText) {
-        console.log("ygdiufywefiuyew");
         instance
           .post("/products/searchProducts/" + searchText)
           .then(function (response) {
-            console.log("Res:", response.data);
             setData(response.data);
           })
           .catch(function (error) {
-            console.log(error);
+            Alert.alert("Thông báo", "Có lỗi xảy ra: " + error.message);
           })
           .then(function () {
             setLoading(false);
@@ -271,7 +269,6 @@ function GenderStack() {
                   renderItem={({ item, index }) => (
                     <TouchableOpacity
                       style={{
-                        // paddingBottom: 15,
                         marginHorizontal: 4,
                         borderBottomWidth: 0.5,
                         borderColor: "#DADADA",
@@ -306,7 +303,17 @@ function GenderStack() {
           )}
         </View>
       ) : (
-        <TabGender.Navigator>
+        <TabGender.Navigator
+          tabBarOptions={{
+            indicatorStyle: {
+              // borderBottomColor: 'red',
+              borderBottomWidth: 2,
+              borderColor: "#000000",
+            },
+            // activeTintColor: "red",
+            // inactiveTintColor: "lightgray",
+          }}
+        >
           <TabGender.Screen name="Female" component={Female} />
           <TabGender.Screen name="Male" component={Male} />
         </TabGender.Navigator>
@@ -318,7 +325,6 @@ function GenderStack() {
 function SearchStack() {
   return (
     <Stack.Navigator
-      initialRouteName="GenderStack"
       screenOptions={{
         headerBackTitleVisible: false,
         headerBackImage: () => <BackButton />,
@@ -418,8 +424,10 @@ function MainStack() {
         }}
         listeners={({ navigation }) => ({
           tabPress: (e) => {
-            // e.preventDefault();
-            // navigation.navigate("GenderStack");
+            e.preventDefault();
+            navigation.navigate("Search", {
+              screen: "GenderStack",
+            });
           },
         })}
       />
@@ -531,7 +539,6 @@ export default function App() {
             />
             <Stack.Screen
               name={"Login"}
-              // component={Login}
               options={{
                 headerShown: false,
               }}
@@ -586,7 +593,6 @@ export default function App() {
             />
             <Stack.Screen
               name={"ProductDetails"}
-              // component={ProductDetails}
               options={({ route, navigation }) => ({
                 headerTransparent: true,
                 title: "",

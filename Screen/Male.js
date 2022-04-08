@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import {
   StyleSheet,
   Text,
@@ -52,7 +52,7 @@ const data = [
   },
 ];
 
-const Item = ({ item, onPress, navigation, textColor }) => (
+const Item = ({ item, navigation }) => (
   <TouchableOpacity
     style={{ margin: 2.5 }}
     onPress={() =>
@@ -61,6 +61,10 @@ const Item = ({ item, onPress, navigation, textColor }) => (
         prevScreen: "Gender",
         type: item.name,
         gender: "Male",
+        collection_id: null,
+        low: null,
+        high: null,
+        size: null,
       })
     }
     activeOpacity={1}
