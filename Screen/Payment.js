@@ -10,6 +10,7 @@ import {
   Alert,
   Modal,
   ActivityIndicator,
+  KeyboardAvoidingView,
 } from "react-native";
 import { RadioButton } from "react-native-paper";
 import NumberFormat from "react-number-format";
@@ -17,6 +18,7 @@ import LottieView from "lottie-react-native";
 import { useDispatch, useSelector } from "react-redux";
 import axios from "axios";
 import { clearCart } from "../store/itemAction";
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 
 const Payment = ({ route, navigation }) => {
   const { data, item, total_value, total_product } = route.params;
@@ -95,9 +97,10 @@ const Payment = ({ route, navigation }) => {
   };
 
   return (
-    <ScrollView
+    <KeyboardAwareScrollView
       style={styles.container}
       contentContainerStyle={{ flexGrow: 1 }}
+      extraHeight={100}
     >
       <Modal
         animationType="fade"
@@ -136,7 +139,11 @@ const Payment = ({ route, navigation }) => {
               <Text
                 style={[
                   styles.text_normal,
-                  { fontWeight: "bold", marginTop: 10 },
+                  {
+                    fontWeight: "bold",
+                    marginTop: 10,
+                    fontFamily: "Open_Sans_Bold",
+                  },
                 ]}
               >
                 {value === "cash"
@@ -160,8 +167,12 @@ const Payment = ({ route, navigation }) => {
           </TouchableOpacity>
         </TouchableOpacity>
       </Modal>
+
       <View style={{ flex: 1, paddingHorizontal: "4%" }}>
-        <TouchableOpacity onPress={() => navigation.navigate("Cart")}>
+        <TouchableOpacity
+          style={{ alignSelf: "flex-end" }}
+          onPress={() => navigation.navigate("Cart")}
+        >
           <Text
             style={[
               styles.text_small,
@@ -177,7 +188,11 @@ const Payment = ({ route, navigation }) => {
             <Text
               style={[
                 styles.text_normal,
-                { textAlignVertical: "center", fontWeight: "bold" },
+                {
+                  textAlignVertical: "center",
+                  fontWeight: "bold",
+                  fontFamily: "Open_Sans_Bold",
+                },
               ]}
             >
               {" "}
@@ -193,7 +208,14 @@ const Payment = ({ route, navigation }) => {
           }}
         >
           <Text
-            style={[styles.text_normal, { marginTop: 25, fontWeight: "bold" }]}
+            style={[
+              styles.text_normal,
+              {
+                marginTop: 25,
+                fontWeight: "bold",
+                fontFamily: "Open_Sans_Bold",
+              },
+            ]}
           >
             Địa chỉ nhận hàng
           </Text>
@@ -219,7 +241,14 @@ const Payment = ({ route, navigation }) => {
         </View>
         <View>
           <Text
-            style={[styles.text_normal, { marginTop: 15, fontWeight: "bold" }]}
+            style={[
+              styles.text_normal,
+              {
+                marginTop: 15,
+                fontWeight: "bold",
+                fontFamily: "Open_Sans_Bold",
+              },
+            ]}
           >
             Hình thức thanh toán
           </Text>
@@ -229,7 +258,8 @@ const Payment = ({ route, navigation }) => {
             value={value}
           >
             <View style={{ flexDirection: "row", alignItems: "center" }}>
-              <RadioButton
+              <RadioButton.Android
+                style={{ width: 20, height: 20 }}
                 value="cash"
                 color={"#000000"}
                 uncheckedColor={"#000000"}
@@ -237,7 +267,7 @@ const Payment = ({ route, navigation }) => {
               <Text style={styles.text_normal}>Thanh toán bằng tiền mặt</Text>
             </View>
             <View style={{ flexDirection: "row", alignItems: "center" }}>
-              <RadioButton
+              <RadioButton.Android
                 value="momo"
                 color={"#000000"}
                 uncheckedColor={"#000000"}
@@ -249,39 +279,45 @@ const Payment = ({ route, navigation }) => {
               />
             </View>
           </RadioButton.Group>
-          <View style={styles.sale_container}>
-            <TextInput
-              onChangeText={(code) => setDiscountCode(code)}
-              value={discountCode}
-              editable={!loading && !sale_value.value}
-              placeholder="Nhập mã giảm giá"
-              style={{ flex: 1 }}
-            />
-            <TouchableOpacity
-              style={{
-                backgroundColor: "#000000",
-                justifyContent: "center",
-                width: 100,
-                paddingHorizontal: 18,
-                height: 40,
-              }}
-              activeOpacity={0.8}
-              disabled={loading || orderLoading}
-              onPress={() => checkDiscountCode()}
-            >
-              {loading ? (
-                <ActivityIndicator size="small" color={"#E7F3F1"} />
-              ) : (
-                <>
-                  <Text style={styles.btn_sale}>
-                    {sale_value.value ? "HỦY" : "ÁP DỤNG"}
-                  </Text>
-                </>
-              )}
-            </TouchableOpacity>
-          </View>
+          <KeyboardAvoidingView
+            behavior={Platform.OS === "ios" ? "padding" : "height"}
+            style={{ flex: 1 }}
+          >
+            <View style={styles.sale_container}>
+              <TextInput
+                onChangeText={(code) => setDiscountCode(code)}
+                value={discountCode}
+                editable={!loading && !sale_value.value}
+                placeholder="Nhập mã giảm giá"
+                style={{ flex: 1 }}
+              />
+              <TouchableOpacity
+                style={{
+                  backgroundColor: "#000000",
+                  justifyContent: "center",
+                  width: 100,
+                  paddingHorizontal: 18,
+                  height: 40,
+                }}
+                activeOpacity={0.8}
+                disabled={loading || orderLoading}
+                onPress={() => checkDiscountCode()}
+              >
+                {loading ? (
+                  <ActivityIndicator size="small" color={"#E7F3F1"} />
+                ) : (
+                  <>
+                    <Text style={styles.btn_sale}>
+                      {sale_value.value ? "HỦY" : "ÁP DỤNG"}
+                    </Text>
+                  </>
+                )}
+              </TouchableOpacity>
+            </View>
+          </KeyboardAvoidingView>
         </View>
       </View>
+
       <View style={styles.bottom_container}>
         <View style={{ marginTop: 20, flexDirection: "row" }}>
           <Text style={[styles.text_normal, { flex: 1 }]}>Tạm tính</Text>
@@ -313,7 +349,11 @@ const Payment = ({ route, navigation }) => {
         </View>
         {sale_value.value > 0 && (
           <View
-            style={{ marginTop: 5, flexDirection: "row", alignItems: "center" }}
+            style={{
+              marginTop: 5,
+              flexDirection: "row",
+              alignItems: "center",
+            }}
           >
             <Text style={[styles.text_normal, { flex: 1 }]}>Khuyến mãi</Text>
             <NumberFormat
@@ -333,7 +373,12 @@ const Payment = ({ route, navigation }) => {
           </View>
         )}
         <View style={{ marginTop: 5, flexDirection: "row" }}>
-          <Text style={[styles.text_normal, { flex: 1, fontWeight: "bold" }]}>
+          <Text
+            style={[
+              styles.text_normal,
+              { flex: 1, fontWeight: "bold", fontFamily: "Open_Sans_Bold" },
+            ]}
+          >
             Thành tiền
           </Text>
           <NumberFormat
@@ -343,7 +388,10 @@ const Payment = ({ route, navigation }) => {
             suffix={" đ"}
             renderText={(value, props) => (
               <Text
-                style={[styles.text_normal, { fontWeight: "bold" }]}
+                style={[
+                  styles.text_normal,
+                  { fontWeight: "bold", fontFamily: "Open_Sans_Bold" },
+                ]}
                 {...props}
               >
                 {value}
@@ -420,7 +468,7 @@ const Payment = ({ route, navigation }) => {
           )}
         </TouchableOpacity>
       </View>
-    </ScrollView>
+    </KeyboardAwareScrollView>
   );
 };
 

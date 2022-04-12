@@ -340,7 +340,7 @@ const styles = StyleSheet.create({
   },
   text_status: {
     marginTop: 7,
-    fontFamily: "Open_Sans",
+    fontFamily: "Open_Sans_Bold",
     fontStyle: "normal",
     fontWeight: "bold",
     fontSize: 10,

@@ -23,7 +23,9 @@ const ItemHorizontal = ({ item, onPress, backgroundColor, textColor }) => (
     activeOpacity={1}
   >
     <Image style={styles.imgHorizontal} source={{ uri: item.src }} />
-    <Text style={[styles.nameHorizontal, textColor]}>{item.name}</Text>
+    <Text style={[styles.nameHorizontal, textColor]} numberOfLines={1}>
+      {item.name}
+    </Text>
     <NumberFormat
       value={item.price}
       displayType={"text"}
@@ -171,7 +173,7 @@ const styles = StyleSheet.create({
   },
   title: {
     marginTop: 30,
-    fontFamily: "Roboto",
+    fontFamily: "Open_Sans_Bold",
     fontStyle: "normal",
     fontWeight: "bold",
     fontSize: 16,
@@ -185,13 +187,13 @@ const styles = StyleSheet.create({
   },
   nameHorizontal: {
     marginTop: 10,
-    fontFamily: "Roboto",
+    fontFamily: "Open_Sans_Bold",
     fontStyle: "normal",
     fontWeight: "bold",
     fontSize: 14,
   },
   price: {
-    fontFamily: "Roboto",
+    fontFamily: "Open_Sans_Bold",
     fontStyle: "normal",
     fontWeight: "bold",
     fontSize: 14,
@@ -209,7 +211,7 @@ const styles = StyleSheet.create({
   },
   nameVertical: {
     marginTop: 10,
-    fontFamily: "Roboto",
+    fontFamily: "Open_Sans_Bold",
     fontStyle: "normal",
     fontWeight: "bold",
     fontSize: 16,

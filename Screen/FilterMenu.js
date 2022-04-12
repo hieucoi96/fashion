@@ -327,6 +327,7 @@ const styles = StyleSheet.create({
   headerText: {
     fontStyle: "normal",
     fontWeight: "bold",
+    fontFamily: "Open_Sans_Bold",
     fontSize: 14,
     lineHeight: 21,
     flex: 1,

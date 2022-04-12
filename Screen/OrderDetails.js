@@ -51,7 +51,12 @@ const OrderDetails = ({ route, navigation }) => {
           <View style={{ flexDirection: "row", marginTop: 20 }}>
             <View style={{ flex: 1, flexDirection: "row" }}>
               <Text style={styles.text_normal}>Mã đơn hàng: </Text>
-              <Text style={[styles.text_normal, { fontWeight: "bold" }]}>
+              <Text
+                style={[
+                  styles.text_normal,
+                  { fontWeight: "bold", fontFamily: "Open_Sans_Bold" },
+                ]}
+              >
                 {bill.bill_id.substring(0, 8).toUpperCase()}
               </Text>
             </View>
@@ -65,7 +70,14 @@ const OrderDetails = ({ route, navigation }) => {
             {moment(bill.date_created).format("HH:mm DD-MM-YYYY")}
           </Text>
           <Text
-            style={[styles.text_normal, { marginTop: 15, fontWeight: "bold" }]}
+            style={[
+              styles.text_normal,
+              {
+                marginTop: 15,
+                fontWeight: "bold",
+                fontFamily: "Open_Sans_Bold",
+              },
+            ]}
           >
             Địa chỉ nhận hàng
           </Text>
@@ -105,6 +117,7 @@ const OrderDetails = ({ route, navigation }) => {
                         styles.text_small,
                         {
                           fontWeight: "bold",
+                          fontFamily: "Open_Sans_Bold",
                           textTransform: "uppercase",
                           flex: 1,
                         },

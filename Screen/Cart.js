@@ -235,7 +235,11 @@ const Cart = ({ navigation }) => {
                 <Text
                   style={[
                     styles.text_small,
-                    { fontWeight: "bold", textTransform: "uppercase" },
+                    {
+                      fontWeight: "bold",
+                      textTransform: "uppercase",
+                      fontFamily: "Open_Sans_Bold",
+                    },
                   ]}
                 >
                   {selectedItem.status}
@@ -269,6 +273,7 @@ const Cart = ({ navigation }) => {
                     styles.text_small,
                     {
                       fontWeight: "bold",
+                      fontFamily: "Open_Sans_Bold",
                       textTransform: "uppercase",
                       marginTop: 15,
                     },
@@ -284,6 +289,7 @@ const Cart = ({ navigation }) => {
                     styles.text_small,
                     {
                       fontWeight: "bold",
+                      fontFamily: "Open_Sans_Bold",
                       textTransform: "uppercase",
                       marginTop: 15,
                     },
@@ -391,7 +397,11 @@ const Cart = ({ navigation }) => {
                     <Text
                       style={[
                         styles.text_small,
-                        { fontWeight: "bold", textTransform: "uppercase" },
+                        {
+                          fontWeight: "bold",
+                          fontFamily: "Open_Sans_Bold",
+                          textTransform: "uppercase",
+                        },
                       ]}
                     >
                       {item.status}

@@ -7,6 +7,7 @@ import {
   TextInput,
   ActivityIndicator,
   Alert,
+  KeyboardAvoidingView,
 } from "react-native";
 import { FirebaseRecaptchaVerifierModal } from "expo-firebase-recaptcha";
 import { initializeApp, getApps, getApp } from "firebase/app";
@@ -54,7 +55,6 @@ const ChangePassword = ({ navigation }) => {
 
   const instance = axios.create({
     baseURL: "https://hieuhmph12287-lab5.herokuapp.com/",
-    timeout: 1000,
   });
 
   const confirmClicked = async () => {
@@ -141,7 +141,10 @@ const ChangePassword = ({ navigation }) => {
   };
 
   return (
-    <View style={styles.container}>
+    <KeyboardAvoidingView
+      style={styles.container}
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
+    >
       <Text style={styles.brand}>fasions.</Text>
       <Text style={styles.title}>
         {stage === 1
@@ -222,7 +225,7 @@ const ChangePassword = ({ navigation }) => {
         ref={recaptchaVerifier}
         firebaseConfig={app.options}
       />
-    </View>
+    </KeyboardAvoidingView>
   );
 };
 
@@ -235,7 +238,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: "4%",
   },
   brand: {
-    fontFamily: "Roboto",
+    fontFamily: "Open_Sans_Bold",
     fontStyle: "normal",
     fontWeight: "bold",
     fontSize: 40,
@@ -243,7 +246,7 @@ const styles = StyleSheet.create({
   },
   title: {
     marginTop: 43,
-    fontFamily: "Roboto",
+    fontFamily: "Open_Sans_Bold",
     fontStyle: "normal",
     fontWeight: "bold",
     fontSize: 16,

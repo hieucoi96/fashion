@@ -74,7 +74,14 @@ const Delivery = ({ route, navigation }) => {
             >
               <View style={{ flexDirection: "row" }}>
                 <Text
-                  style={[styles.text_normal, { fontWeight: "bold", flex: 1 }]}
+                  style={[
+                    styles.text_normal,
+                    {
+                      fontWeight: "bold",
+                      fontFamily: "Open_Sans_Bold",
+                      flex: 1,
+                    },
+                  ]}
                 >
                   {item.name_receiver} - {item.phone_receiver}
                 </Text>

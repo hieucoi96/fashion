@@ -91,7 +91,6 @@ const ProductDetails = ({ route, navigation }) => {
   const instance = axios.create({
     baseURL: "https://hieuhmph12287-lab5.herokuapp.com/",
     headers: { "x-access-token": token },
-    timeout: 1000,
   });
 
   useEffect(() => {
@@ -498,7 +497,7 @@ const ProductDetails = ({ route, navigation }) => {
           </TouchableOpacity>
         </View>
         <View style={{ flexDirection: "row", paddingHorizontal: 15 }}>
-          <View>
+          <View style={{ width: "70%" }}>
             <Text style={styles.text_status}>{item.status}</Text>
             <Text style={styles.text_name}>{item.name}</Text>
           </View>
@@ -560,10 +559,15 @@ const ProductDetails = ({ route, navigation }) => {
           )}
         </View>
         <View
-          style={{ flexDirection: "row", marginTop: 10, marginHorizontal: 15 }}
+          style={{
+            flexDirection: "row",
+            marginTop: 10,
+            marginHorizontal: 15,
+            zIndex: 3000,
+          }}
         >
           <View style={{ flex: 1, flexDirection: "row" }}>{listColors}</View>
-          <View style={{ width: "25%" }}>
+          <View style={{ width: "25%", zIndex: 3000 }}>
             <DropDownPicker
               style={{ width: "100%", height: 35 }}
               open={open}
@@ -574,6 +578,8 @@ const ProductDetails = ({ route, navigation }) => {
               setItems={setItems}
               placeholder="Size"
               listMode="SCROLLVIEW"
+              zIndex={3000}
+              zIndexInverse={1000}
             />
           </View>
         </View>
@@ -675,23 +681,23 @@ const styles = StyleSheet.create({
     flex: 1,
     resizeMode: "contain",
   },
-  buttons: {
-    zIndex: 1,
-    height: 15,
-    marginTop: "-5%",
-    justifyContent: "center",
-    alignItems: "center",
-    flexDirection: "row",
-  },
-  icon: {
-    zIndex: 1,
-    height: 15,
-    marginTop: "-5%",
-    justifyContent: "center",
-    alignItems: "center",
-    flexDirection: "row",
-    alignSelf: "flex-end",
-  },
+  // buttons: {
+  //   zIndex: 1,
+  //   height: 15,
+  //   marginTop: "-5%",
+  //   justifyContent: "center",
+  //   alignItems: "center",
+  //   flexDirection: "row",
+  // },
+  // icon: {
+  //   zIndex: 1,
+  //   height: 15,
+  //   marginTop: "-5%",
+  //   justifyContent: "center",
+  //   alignItems: "center",
+  //   flexDirection: "row",
+  //   alignSelf: "flex-end",
+  // },
   button: {
     width: 15,
     height: 15,
@@ -717,9 +723,9 @@ const styles = StyleSheet.create({
   },
   text_status: {
     marginTop: 7,
-    fontFamily: "Open_Sans",
     fontStyle: "normal",
     fontWeight: "bold",
+    fontFamily: "Open_Sans_Bold",
     fontSize: 10,
     lineHeight: 15,
   },
@@ -791,6 +797,7 @@ const styles = StyleSheet.create({
     borderTopWidth: 0.5,
   },
   headerText: {
+    fontFamily: "Open_Sans_Bold",
     fontStyle: "normal",
     fontWeight: "bold",
     fontSize: 14,
@@ -807,7 +814,7 @@ const styles = StyleSheet.create({
   },
   text_sub_status: {
     marginTop: 7,
-    fontFamily: "Open_Sans",
+    fontFamily: "Open_Sans_Bold",
     fontStyle: "normal",
     fontWeight: "bold",
     fontSize: 10,
@@ -851,7 +858,7 @@ const styles = StyleSheet.create({
     alignSelf: "flex-end",
   },
   text_username: {
-    fontFamily: "Open_Sans",
+    fontFamily: "Open_Sans_Bold",
     fontStyle: "normal",
     fontWeight: "bold",
     fontSize: 14,

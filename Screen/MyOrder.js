@@ -166,7 +166,7 @@ const styles = StyleSheet.create({
     lineHeight: 21,
   },
   text_bold: {
-    fontFamily: "Open_Sans",
+    fontFamily: "Open_Sans_Bold",
     fontStyle: "normal",
     fontWeight: "bold",
     fontSize: 14,

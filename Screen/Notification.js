@@ -147,6 +147,7 @@ const styles = StyleSheet.create({
   },
   text_title: {
     fontStyle: "normal",
+    fontFamily: "Open_Sans_Bold",
     fontWeight: "bold",
     fontSize: 14,
     lineHeight: 21,

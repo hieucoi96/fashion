@@ -15,6 +15,7 @@ import { showMessage, hideMessage } from "react-native-flash-message";
 import Ripple from "react-native-material-ripple";
 import axios from "axios";
 import { addUserInfo } from "../store/itemAction";
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 
 const ChangeInfo = ({ route, navigation }) => {
   const { name, type } = route.params ?? {};
@@ -175,9 +176,10 @@ const ChangeInfo = ({ route, navigation }) => {
   };
 
   return (
-    <ScrollView
+    <KeyboardAwareScrollView
       style={{ backgroundColor: "#ffffff" }}
       contentContainerStyle={{ flexGrow: 1 }}
+      extraHeight={100}
     >
       <View style={styles.container}>
         <View style={styles.inputContainer}>
@@ -253,7 +255,7 @@ const ChangeInfo = ({ route, navigation }) => {
           )}
         </Ripple>
       </View>
-    </ScrollView>
+    </KeyboardAwareScrollView>
   );
 };
 

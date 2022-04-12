@@ -111,7 +111,7 @@ const styles = StyleSheet.create({
   },
   text_catalog: {
     textAlign: "center",
-    fontFamily: "Roboto",
+    fontFamily: "Open_Sans_Bold",
     fontStyle: "normal",
     fontWeight: "bold",
     fontSize: 14,

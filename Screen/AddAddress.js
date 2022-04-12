@@ -137,7 +137,10 @@ const AddAddress = ({ route, navigation }) => {
   ));
 
   return (
-    <KeyboardAvoidingView style={styles.container} behavior={"height"}>
+    <KeyboardAvoidingView
+      style={styles.container}
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
+    >
       <View style={{ flex: 1, width: "100%" }}>
         <TextInput
           style={[styles.input, { marginTop: 30 }]}
