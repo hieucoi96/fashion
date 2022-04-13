@@ -43,6 +43,7 @@ const ChangeInfo = ({ route, navigation }) => {
     headers: { "x-access-token": userInfos.token },
   });
 
+  //check kết quả trả về từ màn chọn TP, quận huyện, xã phường (nếu có)
   useEffect(() => {
     if (type === "Tỉnh/Thành Phố") {
       setDistrict("");
@@ -64,6 +65,7 @@ const ChangeInfo = ({ route, navigation }) => {
     { placeholder: "Phường/Xã", value: ward },
   ];
 
+  //Duyệt array listInputAddress trả về 1 list các input c
   const inputAddress = listInputAddress.map((item, index) => (
     <TouchableOpacity
       style={styles.address_container}
@@ -82,6 +84,7 @@ const ChangeInfo = ({ route, navigation }) => {
     </TouchableOpacity>
   ));
 
+  //function check tinh thành phố đã đc chọn hay chưa
   function checkCitySelected() {
     if (city === "") {
       showMessage({
@@ -95,7 +98,7 @@ const ChangeInfo = ({ route, navigation }) => {
     }
     return true;
   }
-
+  //function check quận huyện đã đc chọn hay chưa
   function checkDistrictSelected() {
     if (district === "") {
       showMessage({
@@ -110,6 +113,7 @@ const ChangeInfo = ({ route, navigation }) => {
     return true;
   }
 
+  //Xử lý khi ấn vào input (Tỉnh, TP, quân huyện ... )
   function openSelectAddress(placeholder) {
     if (placeholder === "Tỉnh/Thành Phố") {
       navigation.navigate("SelectAddress", {
@@ -138,8 +142,10 @@ const ChangeInfo = ({ route, navigation }) => {
     }
   }
 
+  //Xử lý khi ấn cập nhật
   const updateUserInfos = () => {
     setErrorMessage("");
+    //Validate
     let name_regex = /^[a-zA-Z]+(([\'\,\.\- ][a-zA-Z ])?[a-zA-Z]*)*$/;
     if (!name_regex.test(fullName)) {
       setErrorMessage("Họ tên không hợp lệ");
@@ -151,6 +157,7 @@ const ChangeInfo = ({ route, navigation }) => {
       return;
     }
     setLoading(true);
+    //Call api update thông tin user
     instance
       .post("/users/changeUserInfos", {
         full_name: fullName,

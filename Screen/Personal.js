@@ -28,6 +28,7 @@ const Personal = ({ navigation }) => {
     { src: require("../assets/icon_logout.png"), title: "Đăng xuất" },
   ];
 
+  //Xử lý mở đến màn khác tùy vào item đc chịn
   function handleItemClick(title) {
     if (title === "Đơn hàng của tôi") {
       navigation.navigate("MyOrder");
@@ -46,6 +47,7 @@ const Personal = ({ navigation }) => {
     }
   }
 
+  //Duyệt array data trả về 1 list các item
   const listItems = data.map((item, index) => (
     <TouchableOpacity
       style={[

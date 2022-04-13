@@ -22,8 +22,10 @@ const Register = ({ navigation }) => {
     baseURL: "https://hieuhmph12287-lab5.herokuapp.com/",
   });
 
+  //Xử lý khi ấn nút đăng kí
   const userResgister = () => {
     setErrorMessage("");
+    //Validate
     let phone_regex = /(0[3|5|7|8|9])+([0-9]{8})\b/;
     if (!phone_regex.test(phone_number)) {
       setErrorMessage("Số điện thoại không hợp lệ");
@@ -43,6 +45,7 @@ const Register = ({ navigation }) => {
     }
 
     setLoading(true);
+    //Call Api đăng ký
     instance
       .post("/users/registerUser", {
         phone_number,

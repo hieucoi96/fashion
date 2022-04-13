@@ -21,6 +21,7 @@ import axios from "axios";
 import { getReactNativePersistence } from "firebase/auth/react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
+//Config firebase cho firebase auth
 const firebaseConfig = {
   apiKey: "AIzaSyBssvdQ9W3xe5nnW-tjL8sIiXwOnBBCRfU",
   authDomain: "fasion-c4262.firebaseapp.com",
@@ -57,16 +58,20 @@ const ChangePassword = ({ navigation }) => {
     baseURL: "https://hieuhmph12287-lab5.herokuapp.com/",
   });
 
+  //Xử lý button xác nhận
   const confirmClicked = async () => {
     setErrorMessage("");
+    //Dựa vào stage hiện tại để xử lý button click (1 - Nhập sđt, 2 - Nhập mã OTP, 3 - Nhập MK mới)
     if (stage === 1) {
       try {
+        //Validate sđt
         let phone_regex = /(0[3|5|7|8|9])+([0-9]{8})\b/;
         if (!phone_regex.test(currentInput)) {
           setErrorMessage("Số điện thoại không hợp lệ");
           return;
         }
         setLoading(true);
+        //Gửi mã OTP theo sđt đã nhập
         const phoneProvider = new PhoneAuthProvider(auth);
         const verificationId = await phoneProvider.verifyPhoneNumber(
           "+84" + currentInput,
@@ -85,12 +90,14 @@ const ChangePassword = ({ navigation }) => {
       setLoading(false);
     } else if (stage === 2) {
       try {
+        //Validate OTP
         let otp_regex = /^[0-9]{1,6}$/;
         if (!otp_regex.test(currentInput)) {
           setErrorMessage("Mã OTP không hợp lệ");
           return;
         }
         setLoading(true);
+        //Check mã OTP nhập vào
         const credential = PhoneAuthProvider.credential(
           verificationId,
           currentInput
@@ -110,6 +117,7 @@ const ChangePassword = ({ navigation }) => {
       }
       setLoading(false);
     } else {
+      //Validate Pass
       let password_regex = /^([a-zA-Z0-9@*#]{8,15})$/;
       if (!password_regex.test(currentInput)) {
         setErrorMessage(
@@ -118,6 +126,7 @@ const ChangePassword = ({ navigation }) => {
         return;
       }
       setLoading(true);
+      //Call Api đổi mật khẩu
       instance
         .post("/users/changePassword", {
           phone_number,

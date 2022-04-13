@@ -20,6 +20,7 @@ import axios from "axios";
 const heartOutline = require("../assets/icon_heart_outline.png");
 const heartFull = require("../assets/icon_heart_full.png");
 
+//Giao diện item
 const Item = ({ item, addOrRemoveFav, favorite, onPress }) => {
   return (
     <TouchableOpacity
@@ -88,6 +89,7 @@ const Favorite = ({ navigation }) => {
     headers: { "x-access-token": token },
   });
 
+  //Call api danh sách sp yêu thích
   useEffect(() => {
     setLoading(true);
     instance
@@ -104,6 +106,7 @@ const Favorite = ({ navigation }) => {
       });
   }, [isFocused]);
 
+  //Giao diện item
   const renderItem = ({ item }) => {
     return (
       <Item

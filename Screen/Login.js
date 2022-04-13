@@ -27,12 +27,14 @@ const Login = ({ navigation, notifyToken }) => {
     baseURL: "https://hieuhmph12287-lab5.herokuapp.com/",
   });
 
+  //Set font chữ
   const [loaded] = useFonts({
     Open_Sans: require("../assets/fonts/OpenSans-Regular.ttf"),
     Roboto: require("../assets/fonts/Roboto-Regular.ttf"),
     Open_Sans_Bold: require("../assets/fonts/OpenSans-Bold.ttf"),
   });
 
+  //Ngăn hành động back, kéo về
   useEffect(() => {
     navigation.addListener("beforeRemove", (e) => {
       e.preventDefault();
@@ -43,8 +45,11 @@ const Login = ({ navigation, notifyToken }) => {
     return null;
   }
 
+  // Function xử lý khi ấn nút đăng nhập
   const userLogin = () => {
+    //Xóa dòng báo lỗi  (nếu có)
     setErrorMessage("");
+    //Validate thông tin đăng nhập
     let phone_regex = /(0[3|5|7|8|9])+([0-9]{8})\b/;
     if (!phone_regex.test(phone_number)) {
       setErrorMessage("Số điện thoại không hợp lệ");
@@ -55,7 +60,7 @@ const Login = ({ navigation, notifyToken }) => {
       setErrorMessage("Mật khẩu không hợp lệ");
       return;
     }
-
+    //Call api đăng nhập
     setLoading(true);
     instance
       .post("/users/loginUser", {
@@ -66,6 +71,7 @@ const Login = ({ navigation, notifyToken }) => {
       .then(function (response) {
         const token = response.data.token;
         setLoading(false);
+        //Lưu thông tin người dùng và chuyển sang màn Home
         dispatch(addUserInfo(response.data));
         navigation.navigate("MainStack", {
           params: { phone_number, token },

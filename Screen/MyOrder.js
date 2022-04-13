@@ -27,6 +27,7 @@ const MyOrder = ({ navigation }) => {
   const [billData, setBillData] = useState([]);
   const [loading, setLoading] = useState(false);
 
+  //Call api lấy ds hóa đơn
   useEffect(() => {
     setLoading(true);
     instance
@@ -43,6 +44,7 @@ const MyOrder = ({ navigation }) => {
       });
   }, [isFocused]);
 
+  //check Status hóa đơn để set màu chữ
   const getColor = (status) => {
     let color;
     if (status === "Đang xử lý") {

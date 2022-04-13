@@ -11,6 +11,7 @@ import {
 import LottieView from "lottie-react-native";
 
 const Search = ({ navigation }) => {
+  //Sử dụng sdk lottie view hiển thị hình ảnh động
   return (
     <View style={styles.container}>
       <LottieView

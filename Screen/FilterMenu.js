@@ -59,6 +59,7 @@ const FilterMenu = ({ navigation, route }) => {
     setHigh(high);
   }, []);
 
+  //render component cho phần chọn giá
   const renderThumb = useCallback(() => <Thumb />, []);
   const renderRail = useCallback(() => <Rail />, []);
   const renderRailSelected = useCallback(() => <RailSelected />, []);

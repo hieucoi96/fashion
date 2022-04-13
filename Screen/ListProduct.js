@@ -30,6 +30,7 @@ const ListProduct = ({ route, navigation }) => {
     headers: { "x-access-token": token },
   });
 
+  //Call api lấy ds sản phẩm (dựa vào collection_id || type, gender + low, high, size từ bộ lọc (nếu có))
   useEffect(() => {
     setLoading(true);
     if (collection_id) {
@@ -71,6 +72,7 @@ const ListProduct = ({ route, navigation }) => {
 
   const [selectedView, setSelectedView] = useState("grid");
 
+  // Xử lý khi bấm button đổi kiểu hiển thị
   function selectView() {
     if (selectedView === "grid") {
       setSelectedView("list");
@@ -79,6 +81,7 @@ const ListProduct = ({ route, navigation }) => {
     }
   }
 
+  //Giao diện item
   const Item = ({ item }) => {
     const fav_product_list = useSelector((state) => state.userReducer.favorite);
     const dispatch = useDispatch();
@@ -99,6 +102,7 @@ const ListProduct = ({ route, navigation }) => {
             <TouchableOpacity
               style={styles.btn}
               onPress={() => {
+                //Call api favorite và đổi fav local app (chạy song song)
                 instance
                   .get("/users/addFavorite/" + item.product_id)
                   .then(function (response) {})
@@ -197,6 +201,7 @@ const ListProduct = ({ route, navigation }) => {
     );
   };
 
+  //Viết dài
   const renderItem = ({ item }) => {
     return <Item item={item} />;
   };

@@ -52,6 +52,7 @@ const data = [
   },
 ];
 
+//Giao diện item
 const Item = ({ item, onPress, navigation, textColor }) => (
   <TouchableOpacity
     style={{ margin: 2.5 }}

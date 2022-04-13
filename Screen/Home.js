@@ -16,6 +16,7 @@ import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
 import { useIsFocused } from "@react-navigation/native";
 
+//Giao diện item danh sách New Arrival
 const ItemHorizontal = ({ item, onPress, backgroundColor, textColor }) => (
   <TouchableOpacity
     onPress={onPress}
@@ -40,6 +41,7 @@ const ItemHorizontal = ({ item, onPress, backgroundColor, textColor }) => (
   </TouchableOpacity>
 );
 
+//Giao diện item danh sách collection
 const ItemVertical = ({ item, onPress, backgroundColor, textColor }) => (
   <TouchableOpacity
     onPress={onPress}
@@ -63,6 +65,7 @@ const Home = ({ navigation, route }) => {
     headers: { "x-access-token": token },
   });
 
+  //Call Api lấy ds sản phầm và collection
   useEffect(() => {
     setLoading(true);
     const prod = () => {
@@ -85,10 +88,12 @@ const Home = ({ navigation, route }) => {
       });
   }, [isFocused]);
 
+  //Xử lý khi ấn vào item new arrival
   function openProductDetails(item) {
     navigation.navigate("ProductDetails", { item, token });
   }
 
+  //Xử lý khi ấn vào item ds collection
   const openCollectionDetails = (c) => {
     navigation.navigate("Search", {
       params: {
@@ -106,6 +111,7 @@ const Home = ({ navigation, route }) => {
     });
   };
 
+  // 2 thg này viết tiếp phần giao diện item (viết dài)
   const renderItemHorizontal = ({ item }) => {
     const backgroundColor = "#ffffff";
     const color = "black";
