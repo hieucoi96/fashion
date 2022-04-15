@@ -138,7 +138,7 @@ const Favorite = ({ navigation }) => {
         </View>
       ) : (
         <FlatList
-          style={{ flex: 1 }}
+          style={{ flex: 1, paddingHorizontal: "4%" }}
           data={listProduct}
           renderItem={renderItem}
           keyExtractor={(item) => item.product_id}
@@ -155,7 +155,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#ffffff",
-    paddingHorizontal: "4%",
   },
   item: {},
   image_fav: {

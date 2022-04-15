@@ -69,6 +69,7 @@ const Notification = ({ navigation }) => {
   const [notiData, setNotiData] = useState([]);
   const [loading, setLoading] = useState(false);
 
+  // Call api lấy ds hóa đơn
   useEffect(() => {
     setLoading(true);
     instance

@@ -4,9 +4,8 @@ import {
   Text,
   View,
   FlatList,
-  Image,
+  // Image,
   TouchableOpacity,
-  ScrollView,
   SafeAreaView,
   ActivityIndicator,
   Alert,
@@ -15,6 +14,7 @@ import NumberFormat from "react-number-format";
 import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
 import { useIsFocused } from "@react-navigation/native";
+import { Image } from "react-native-expo-image-cache";
 
 //Giao diện item danh sách New Arrival
 const ItemHorizontal = ({ item, onPress, backgroundColor, textColor }) => (
@@ -23,7 +23,12 @@ const ItemHorizontal = ({ item, onPress, backgroundColor, textColor }) => (
     style={[styles.itemHorizontal, backgroundColor]}
     activeOpacity={1}
   >
-    <Image style={styles.imgHorizontal} source={{ uri: item.src }} />
+    <Image
+      style={styles.imgHorizontal}
+      // source={{ uri: item.src }}
+      defaultSource={require("../assets/product_01_1.jpg")}
+      uri={item.src}
+    />
     <Text style={[styles.nameHorizontal, textColor]} numberOfLines={1}>
       {item.name}
     </Text>
@@ -48,7 +53,12 @@ const ItemVertical = ({ item, onPress, backgroundColor, textColor }) => (
     style={[styles.itemVertical, backgroundColor]}
     activeOpacity={1}
   >
-    <Image style={styles.imgVertical} source={{ uri: item.src }} />
+    <Image
+      style={styles.imgVertical}
+      defaultSource={require("../assets/product_01_1.jpg")}
+      // source={{ uri: item.src }}
+      uri={item.src}
+    />
     <Text style={[styles.nameVertical, textColor]}>{item.name}</Text>
   </TouchableOpacity>
 );

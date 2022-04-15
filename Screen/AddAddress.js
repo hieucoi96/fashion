@@ -192,7 +192,6 @@ const AddAddress = ({ route, navigation }) => {
               color: "red",
               fontSize: 12,
               opacity: 0.7,
-              paddingLeft: 4,
               marginTop: 0,
             }}
           >
@@ -212,6 +211,10 @@ const AddAddress = ({ route, navigation }) => {
           let phone_regex = /(0[3|5|7|8|9])+([0-9]{8})\b/;
           if (!phone_regex.test(phone_number)) {
             setErrorMessage("Số điện thoại không hợp lệ");
+            return;
+          }
+          if (!(city && district && ward && addressDetail)) {
+            setErrorMessage("Vui lòng nhập đầy đủ thông tin");
             return;
           }
           setLoading(true);

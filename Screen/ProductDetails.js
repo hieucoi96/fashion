@@ -559,15 +559,17 @@ const ProductDetails = ({ route, navigation }) => {
           )}
         </View>
         <View
-          style={{
-            flexDirection: "row",
-            marginTop: 10,
-            marginHorizontal: 15,
-            zIndex: 3000,
-          }}
+          style={[
+            {
+              flexDirection: "row",
+              marginTop: 10,
+              marginHorizontal: 15,
+            },
+            Platform.OS !== "android" && { zIndex: 3000 },
+          ]}
         >
           <View style={{ flex: 1, flexDirection: "row" }}>{listColors}</View>
-          <View style={{ width: "25%", zIndex: 3000 }}>
+          <View style={{ width: "25%" }}>
             <DropDownPicker
               style={{ width: "100%", height: 35 }}
               open={open}

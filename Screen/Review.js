@@ -61,7 +61,7 @@ const Review = ({ navigation, route }) => {
             })
             .then(function (response) {
               Alert.alert("Thông báo", "Đánh giá sản phẩm thành công!", [
-                { text: "OK", onPress: () => navigation.goBack() },
+                { text: "OK", onPress: () => navigation.navigate("MyOrder") },
               ]);
             })
             .catch(function (error) {
