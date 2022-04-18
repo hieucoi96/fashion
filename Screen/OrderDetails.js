@@ -11,6 +11,7 @@ import { StackActions } from "@react-navigation/native";
 import NumberFormat from "react-number-format";
 import moment from "moment";
 import { AntDesign, EvilIcons } from "@expo/vector-icons";
+import { Image as CacheImage } from "react-native-expo-image-cache";
 
 const OrderDetails = ({ route, navigation }) => {
   const { bill } = route.params;
@@ -104,9 +105,9 @@ const OrderDetails = ({ route, navigation }) => {
               }}
               activeOpacity={1}
             >
-              <Image
+              <CacheImage
                 style={{ width: 100, height: 139, marginRight: 10 }}
-                source={{ uri: item.src }}
+                uri={item.src}
               />
 
               <View style={{ flexDirection: "column", flex: 1 }}>

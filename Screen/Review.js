@@ -18,6 +18,7 @@ const Review = ({ navigation, route }) => {
   const [loading, setLoading] = useState(false);
   const { bill_id, item } = route.params;
   const name = useSelector((state) => state.userReducer.full_name);
+  const phone_number = useSelector((state) => state.userReducer.phone_number);
   const token = useSelector((state) => state.userReducer.token);
 
   const instance = axios.create({
@@ -55,7 +56,7 @@ const Review = ({ navigation, route }) => {
               bill_id,
               product_id: item.product_id,
               item_bought_id: item.item_bought_id,
-              name,
+              name: name ? name : phone_number,
               rate: rating,
               note: review,
             })

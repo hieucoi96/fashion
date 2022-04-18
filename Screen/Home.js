@@ -4,7 +4,6 @@ import {
   Text,
   View,
   FlatList,
-  // Image,
   TouchableOpacity,
   SafeAreaView,
   ActivityIndicator,
@@ -12,7 +11,7 @@ import {
 } from "react-native";
 import NumberFormat from "react-number-format";
 import axios from "axios";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { useIsFocused } from "@react-navigation/native";
 import { Image } from "react-native-expo-image-cache";
 
@@ -25,8 +24,7 @@ const ItemHorizontal = ({ item, onPress, backgroundColor, textColor }) => (
   >
     <Image
       style={styles.imgHorizontal}
-      // source={{ uri: item.src }}
-      defaultSource={require("../assets/product_01_1.jpg")}
+      defaultSource={require("../assets/empty_image.png")}
       uri={item.src}
     />
     <Text style={[styles.nameHorizontal, textColor]} numberOfLines={1}>
@@ -55,8 +53,7 @@ const ItemVertical = ({ item, onPress, backgroundColor, textColor }) => (
   >
     <Image
       style={styles.imgVertical}
-      defaultSource={require("../assets/product_01_1.jpg")}
-      // source={{ uri: item.src }}
+      defaultSource={require("../assets/empty_image.png")}
       uri={item.src}
     />
     <Text style={[styles.nameVertical, textColor]}>{item.name}</Text>

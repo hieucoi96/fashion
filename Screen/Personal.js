@@ -24,7 +24,7 @@ const Personal = ({ navigation }) => {
     { src: require("../assets/icon_cube.png"), title: "Đơn hàng của tôi" },
     { src: require("../assets/icon_plane_paper.png"), title: "Thông báo" },
     { src: require("../assets/icon_faq.png"), title: "FAQS" },
-    { src: require("../assets/icon_share.png"), title: "Chia sẻ" },
+    // { src: require("../assets/icon_share.png"), title: "Chia sẻ" },
     { src: require("../assets/icon_logout.png"), title: "Đăng xuất" },
   ];
 
