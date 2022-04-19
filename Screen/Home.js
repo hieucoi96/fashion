@@ -11,7 +11,8 @@ import {
 } from "react-native";
 import NumberFormat from "react-number-format";
 import axios from "axios";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
+import { logOut } from "../store/itemAction";
 import { useIsFocused } from "@react-navigation/native";
 import { Image } from "react-native-expo-image-cache";
 
@@ -65,6 +66,7 @@ const Home = ({ navigation, route }) => {
   const [verticalList, setVerticalList] = useState(null);
   const [loading, setLoading] = useState(false);
   const token = useSelector((state) => state.userReducer.token);
+  const dispatch = useDispatch();
   const isFocused = useIsFocused();
 
   const instance = axios.create({
@@ -87,8 +89,16 @@ const Home = ({ navigation, route }) => {
         setVerticalList(results[1].data);
       })
       .catch(function (error) {
-        console.log(error);
-        Alert.alert("Thông báo", "Có lỗi xảy ra: " + error.message);
+        //Check token đã hết hạn chưa trong trương hợp user auto login
+        if (error.message === "Invalid Token") {
+          Alert.alert(
+            "Thông báo",
+            "Phiên đăng nhập hết hạn. Vui lòng đăng nhập lại!",
+            [{ text: "OK", onPress: () => dispatch(logOut()) }]
+          );
+        } else {
+          Alert.alert("Thông báo", "Có lỗi xảy ra: " + error.message);
+        }
       })
       .then(function () {
         setLoading(false);

@@ -7,10 +7,8 @@ import {
   TextInput,
   Alert,
   ActivityIndicator,
-  ScrollView,
   KeyboardAvoidingView,
 } from "react-native";
-import { useFonts } from "expo-font";
 import Ripple from "react-native-material-ripple";
 import axios from "axios";
 import { useDispatch } from "react-redux";
@@ -19,7 +17,7 @@ import { addUserInfo } from "../store/itemAction";
 const Login = ({ navigation, notifyToken }) => {
   const dispatch = useDispatch();
   const [phone_number, setPhone] = useState("0977052703");
-  const [password, setPassword] = useState("123456789");
+  const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
 
@@ -27,23 +25,12 @@ const Login = ({ navigation, notifyToken }) => {
     baseURL: "https://hieuhmph12287-lab5.herokuapp.com/",
   });
 
-  //Set font chữ
-  const [loaded] = useFonts({
-    Open_Sans: require("../assets/fonts/OpenSans-Regular.ttf"),
-    Roboto: require("../assets/fonts/Roboto-Regular.ttf"),
-    Open_Sans_Bold: require("../assets/fonts/OpenSans-Bold.ttf"),
-  });
-
-  //Ngăn hành động back, kéo về
+  //Ngăn hành động back, kéo về màn splash screen
   useEffect(() => {
     navigation.addListener("beforeRemove", (e) => {
       e.preventDefault();
     });
   }, []);
-
-  if (!loaded) {
-    return null;
-  }
 
   // Function xử lý khi ấn nút đăng nhập
   const userLogin = () => {

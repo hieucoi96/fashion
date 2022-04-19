@@ -4,7 +4,6 @@ import {
   Text,
   View,
   FlatList,
-  Image,
   TouchableOpacity,
   Alert,
   Modal,
@@ -24,6 +23,7 @@ import { useDispatch, useSelector } from "react-redux";
 import FlashMessage, { showMessage } from "react-native-flash-message";
 import Ripple from "react-native-material-ripple";
 import axios from "axios";
+import { Image } from "react-native-expo-image-cache";
 
 const Cart = ({ navigation }) => {
   const dispatch = useDispatch();
@@ -388,7 +388,7 @@ const Cart = ({ navigation }) => {
             >
               <Image
                 style={{ width: 100, height: 139, marginRight: 10 }}
-                source={{ uri: item.src }}
+                uri={item.src}
               />
 
               <View style={{ flexDirection: "column", flex: 1 }}>

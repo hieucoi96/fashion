@@ -4,10 +4,7 @@ import {
   Text,
   View,
   FlatList,
-  Image,
   TouchableOpacity,
-  TextInput,
-  ActivityIndicator,
 } from "react-native";
 import NumberFormat from "react-number-format";
 import { AntDesign } from "@expo/vector-icons";

@@ -10,6 +10,8 @@ import {
   KeyboardAvoidingView,
 } from "react-native";
 import axios from "axios";
+import { useDispatch } from "react-redux";
+import { addUserInfo } from "../store/itemAction";
 
 const Register = ({ navigation }) => {
   const [phone_number, setPhone] = useState("");
@@ -57,11 +59,13 @@ const Register = ({ navigation }) => {
         Alert.alert("Thông báo", "Đăng ký tài khoản thành công!", [
           {
             text: "OK",
-            onPress: () =>
+            onPress: () => {
+              dispatch(addUserInfo(response.data));
               navigation.navigate("MainStack", {
                 params: { phone_number },
                 screen: "Home",
-              }),
+              });
+            },
           },
         ]);
       })

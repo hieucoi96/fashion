@@ -10,6 +10,7 @@ import {
   ADD_USER_INFO,
   UPDATE_DELIVERY,
   CLEAR_CART,
+  LOGOUT,
 } from "./itemTypes";
 export const addItem = (item) => ({
   type: ADD_ITEM,
@@ -73,4 +74,7 @@ export const updateDelivery = (deliveryList) => ({
 });
 export const clearCart = () => ({
   type: CLEAR_CART,
+});
+export const logOut = () => ({
+  type: LOGOUT,
 });

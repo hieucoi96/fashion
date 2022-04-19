@@ -11,6 +11,7 @@ import {
 } from "react-native";
 import { AntDesign } from "@expo/vector-icons";
 import { EvilIcons } from "@expo/vector-icons";
+import { logOut } from "../store/itemAction";
 
 const Personal = ({ navigation }) => {
   const name = useSelector((state) =>
@@ -18,13 +19,12 @@ const Personal = ({ navigation }) => {
       ? state.userReducer.full_name
       : state.userReducer.phone_number
   );
-  //   const phone = useSelector((state) => state.userReducer.fullname);
+  const dispatch = useDispatch();
 
   const data = [
     { src: require("../assets/icon_cube.png"), title: "Đơn hàng của tôi" },
     { src: require("../assets/icon_plane_paper.png"), title: "Thông báo" },
     { src: require("../assets/icon_faq.png"), title: "FAQS" },
-    // { src: require("../assets/icon_share.png"), title: "Chia sẻ" },
     { src: require("../assets/icon_logout.png"), title: "Đăng xuất" },
   ];
 
@@ -39,11 +39,8 @@ const Personal = ({ navigation }) => {
     if (title === "FAQS") {
       navigation.navigate("FAQS");
     }
-    if (title === "Chia sẻ") {
-      navigation.navigate("FAQS");
-    }
     if (title === "Đăng xuất") {
-      navigation.navigate("Login");
+      dispatch(logOut());
     }
   }
 

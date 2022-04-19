@@ -3,7 +3,6 @@ import {
   StyleSheet,
   Text,
   View,
-  ScrollView,
   Image,
   TouchableOpacity,
   TextInput,
@@ -433,7 +432,7 @@ const Payment = ({ route, navigation }) => {
                           total_value: total_value,
                           final_value:
                             total_value + delivery_value - sale_value.value,
-                          product: data,
+                          product: response.data.product,
                           status: response.data.status,
                         },
                       });

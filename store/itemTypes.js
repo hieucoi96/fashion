@@ -10,3 +10,4 @@ export const ADD_USER_INFO = "ADD_USER_INFO";
 export const UPDATE_DELIVERY = "UPDATE_DELIVERY";
 export const CLEAR_CART = "CLEAR_CART";
 export const UPDATE_CART = "UPDATE_CART";
+export const LOGOUT = "LOGOUT";

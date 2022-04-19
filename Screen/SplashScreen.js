@@ -1,16 +1,10 @@
-import React, { useState } from "react";
-import {
-  StyleSheet,
-  Text,
-  View,
-  FlatList,
-  Image,
-  TouchableOpacity,
-  TextInput,
-} from "react-native";
+import React from "react";
+import { StyleSheet, View } from "react-native";
 import LottieView from "lottie-react-native";
+import { useSelector } from "react-redux";
 
-const Search = ({ navigation }) => {
+const SplashScreen = ({ navigation }) => {
+  const token = useSelector((state) => state.userReducer.token);
   //Sử dụng sdk lottie view hiển thị hình ảnh động
   return (
     <View style={styles.container}>
@@ -20,7 +14,16 @@ const Search = ({ navigation }) => {
         loop={false}
         speed={1.5}
         autoPlay
-        onAnimationFinish={() => navigation.navigate("Login")}
+        onAnimationFinish={() => {
+          console.log("hhh");
+          if (!token) {
+            console.log("log");
+            navigation.navigate("Login");
+          } else {
+            console.log("main");
+            navigation.navigate("MainStack");
+          }
+        }}
       />
     </View>
   );
@@ -35,4 +38,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Search;
+export default SplashScreen;

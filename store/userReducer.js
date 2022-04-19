@@ -7,6 +7,7 @@ import {
   CHANGE_INFO,
   UPDATE_DELIVERY,
   CLEAR_CART,
+  LOGOUT,
 } from "./itemTypes";
 import { showMessage } from "react-native-flash-message";
 
@@ -24,6 +25,7 @@ const initialState = {
   bill_list: [],
   delivery: [],
   notify_list: [],
+  showSplash: true,
 };
 const userReducer = (state = initialState, action) => {
   switch (action.type) {
@@ -75,6 +77,8 @@ const userReducer = (state = initialState, action) => {
         ...state,
         cart: [],
       };
+    case LOGOUT:
+      return { ...state, token: null, showSplash: false };
     default:
       return state;
   }

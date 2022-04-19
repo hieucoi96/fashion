@@ -112,7 +112,7 @@ const OrderDetails = ({ route, navigation }) => {
 
               <View style={{ flexDirection: "column", flex: 1 }}>
                 <View style={{ flex: 1 }}>
-                  <View style={{ flexDirection: "row" }}>
+                  <View style={{ flexDirection: "row", height: 16 }}>
                     <Text
                       style={[
                         styles.text_small,
@@ -129,7 +129,6 @@ const OrderDetails = ({ route, navigation }) => {
                     {bill.status === "Đã hoàn thành" &&
                       item.evaluated === false && (
                         <TouchableOpacity
-                          style={{ paddingBottom: 15, paddingLeft: 15 }}
                           onPress={() =>
                             navigation.navigate("Review", {
                               bill_id: bill.bill_id,
