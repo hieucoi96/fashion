@@ -458,8 +458,8 @@ function MainStack() {
 
 function Route() {
   const token = useSelector((state) => state.userReducer.token);
+  console.log("Token: ", token);
   const showSplash = useSelector((state) => state.userReducer.showSplash);
-  console.log("???", showSplash);
   const [expoPushToken, setExpoPushToken] = useState("");
   const [notification, setNotification] = useState(false);
   const notificationListener = useRef();

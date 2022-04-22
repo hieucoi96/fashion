@@ -78,7 +78,7 @@ const userReducer = (state = initialState, action) => {
         cart: [],
       };
     case LOGOUT:
-      return { ...state, token: null, showSplash: false };
+      return { ...state, token: null };
     default:
       return state;
   }

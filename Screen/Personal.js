@@ -1,17 +1,10 @@
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  StyleSheet,
-  Text,
-  View,
-  FlatList,
-  Image,
-  TouchableOpacity,
-  TextInput,
-} from "react-native";
+import { StyleSheet, Text, View, Image, TouchableOpacity } from "react-native";
 import { AntDesign } from "@expo/vector-icons";
 import { EvilIcons } from "@expo/vector-icons";
 import { logOut } from "../store/itemAction";
+import { addUserInfo } from "../store/itemAction";
 
 const Personal = ({ navigation }) => {
   const name = useSelector((state) =>
@@ -19,6 +12,7 @@ const Personal = ({ navigation }) => {
       ? state.userReducer.full_name
       : state.userReducer.phone_number
   );
+  const token = useSelector((state) => state.userReducer.token);
   const dispatch = useDispatch();
 
   const data = [
@@ -78,21 +72,49 @@ const Personal = ({ navigation }) => {
 
   return (
     <View style={styles.container}>
-      <View
-        style={{ flexDirection: "row", alignItems: "center", marginBottom: 20 }}
-      >
-        <View style={{ flex: 1 }}>
-          <Text style={styles.text_normal}>Xin chào</Text>
-          <Text style={styles.name}>{name}</Text>
+      {token === "1" || token === "" ? (
+        <View style={{ flex: 1, justifyContent: "center" }}>
+          <Text style={{ textAlign: "center" }}>
+            Vui lòng{" "}
+            <Text
+              style={{
+                fontFamily: "Open_Sans_Bold",
+                fontWeight: "bold",
+                textDecorationLine: "underline",
+                fontSize: 16,
+              }}
+              onPress={() => {
+                dispatch(addUserInfo({ token: "" }));
+              }}
+            >
+              Đăng nhập
+            </Text>{" "}
+            để sử dụng tính năng này
+          </Text>
         </View>
-        <TouchableOpacity
-          style={styles.icon_setting}
-          onPress={() => navigation.navigate("ChangeInfo")}
-        >
-          <AntDesign name="setting" size={18} color="black" />
-        </TouchableOpacity>
-      </View>
-      <View style={{ flexDirection: "column" }}>{listItems}</View>
+      ) : (
+        <>
+          <View
+            style={{
+              flexDirection: "row",
+              alignItems: "center",
+              marginBottom: 20,
+            }}
+          >
+            <View style={{ flex: 1 }}>
+              <Text style={styles.text_normal}>Xin chào</Text>
+              <Text style={styles.name}>{name}</Text>
+            </View>
+            <TouchableOpacity
+              style={styles.icon_setting}
+              onPress={() => navigation.navigate("ChangeInfo")}
+            >
+              <AntDesign name="setting" size={18} color="black" />
+            </TouchableOpacity>
+          </View>
+          <View style={{ flexDirection: "column" }}>{listItems}</View>
+        </>
+      )}
     </View>
   );
 };

@@ -14,7 +14,7 @@ import {
 } from "react-native";
 import NumberFormat from "react-number-format";
 import { useDispatch, useSelector } from "react-redux";
-import { changeFav } from "../store/itemAction";
+import { changeFav, addUserInfo } from "../store/itemAction";
 import axios from "axios";
 
 const heartOutline = require("../assets/icon_heart_outline.png");
@@ -77,10 +77,8 @@ const Item = ({ item, addOrRemoveFav, favorite, onPress }) => {
 
 const Favorite = ({ navigation }) => {
   const dispatch = useDispatch();
-  // const data = useSelector(state => state.favReducer.data)
-  // const temp = [...data]
   const isFocused = useIsFocused();
-  const [listProduct, setListProduct] = useState(null);
+  const [listProduct, setListProduct] = useState([]);
   const [loading, setLoading] = useState(false);
   const fav_product_list = useSelector((state) => state.userReducer.favorite);
   const token = useSelector((state) => state.userReducer.token);
@@ -91,19 +89,31 @@ const Favorite = ({ navigation }) => {
 
   //Call api danh sách sp yêu thích
   useEffect(() => {
-    setLoading(true);
-    instance
-      .post("products/getFavoriteProducts", { product_ids: fav_product_list })
-      .then(function (response) {
-        setListProduct(response.data);
-      })
-      .catch(function (error) {
-        Alert.alert("Thông báo", "Có lỗi xảy ra: " + error.message);
-        console.log(error);
-      })
-      .then(function () {
-        setLoading(false);
-      });
+    const controller = new AbortController();
+    if (token !== "1" && token !== null) {
+      setLoading(true);
+      instance
+        .post(
+          "products/getFavoriteProducts",
+          { product_ids: fav_product_list },
+          { signal: controller.signal }
+        )
+        .then(function (response) {
+          setListProduct(response.data);
+        })
+        .catch(function (error) {
+          if (!axios.isCancel(error)) {
+            Alert.alert("Thông báo", "Có lỗi xảy ra: " + error.message);
+            console.log(error);
+          }
+        })
+        .then(function () {
+          setLoading(false);
+        });
+    }
+    return () => {
+      controller.abort();
+    };
   }, [isFocused]);
 
   //Giao diện item
@@ -130,22 +140,64 @@ const Favorite = ({ navigation }) => {
 
   return (
     <SafeAreaView style={styles.container}>
-      {loading ? (
-        <View
-          style={{ justifyContent: "center", alignItems: "center", flex: 1 }}
-        >
-          <ActivityIndicator size="large" color="#000000" />
-        </View>
+      {token === "1" || !token ? (
+        <>
+          <Text style={{ textAlign: "center" }}>
+            Vui lòng{" "}
+            <Text
+              style={{
+                fontFamily: "Open_Sans_Bold",
+                fontWeight: "bold",
+                textDecorationLine: "underline",
+                fontSize: 16,
+              }}
+              onPress={() => {
+                dispatch(addUserInfo({ token: null }));
+              }}
+            >
+              Đăng nhập
+            </Text>{" "}
+            để hiển thị danh sách sản phẩm
+          </Text>
+        </>
       ) : (
-        <FlatList
-          style={{ flex: 1, paddingHorizontal: "4%" }}
-          data={listProduct}
-          renderItem={renderItem}
-          keyExtractor={(item) => item.product_id}
-          numColumns={2}
-          showsVerticalScrollIndicator={false}
-          columnWrapperStyle={{ justifyContent: "space-between" }}
-        />
+        <>
+          {loading ? (
+            <View
+              style={{
+                justifyContent: "center",
+                alignItems: "center",
+                flex: 1,
+              }}
+            >
+              <ActivityIndicator size="large" color="#000000" />
+            </View>
+          ) : (
+            <>
+              {listProduct.length === 0 ? (
+                <Text
+                  style={{
+                    fontSize: 18,
+                    color: "#a3a3a0",
+                    textAlign: "center",
+                  }}
+                >
+                  Không tìm thấy sản phẩm nào
+                </Text>
+              ) : (
+                <FlatList
+                  style={{ flex: 1, paddingHorizontal: "4%" }}
+                  data={listProduct}
+                  renderItem={renderItem}
+                  keyExtractor={(item) => item.product_id}
+                  numColumns={2}
+                  showsVerticalScrollIndicator={false}
+                  columnWrapperStyle={{ justifyContent: "space-between" }}
+                />
+              )}
+            </>
+          )}
+        </>
       )}
     </SafeAreaView>
   );
@@ -154,6 +206,7 @@ const Favorite = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    justifyContent: "center",
     backgroundColor: "#ffffff",
   },
   item: {},

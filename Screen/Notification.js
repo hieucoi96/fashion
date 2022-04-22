@@ -72,18 +72,24 @@ const Notification = ({ navigation }) => {
   // Call api lấy ds hóa đơn
   useEffect(() => {
     setLoading(true);
+    const controller = new AbortController();
     instance
-      .get("/notify/getNotifyByUser")
+      .get("/notify/getNotifyByUser", { signal: controller.signal })
       .then(function (response) {
         setNotiData(response.data);
       })
       .catch(function (error) {
-        console.log(error);
-        Alert.alert("Thông báo", "Có lỗi xảy ra: " + error.message);
+        if (!axios.isCancel(error)) {
+          Alert.alert("Thông báo", "Có lỗi xảy ra: " + error.message);
+          console.log(error);
+        }
       })
       .then(function () {
         setLoading(false);
       });
+    return () => {
+      controller.abort();
+    };
   }, [isFocused]);
 
   return (
@@ -91,49 +97,53 @@ const Notification = ({ navigation }) => {
       {loading ? (
         <ActivityIndicator size="large" color={"#000000"} />
       ) : (
-        <FlatList
-          style={{ flex: 1, width: "100%" }}
-          data={notiData}
-          renderItem={({ item, index }) => (
-            <TouchableOpacity
+        <>
+          {notiData.length === 0 ? (
+            <Text
               style={{
-                borderBottomWidth: 0.5,
-                borderColor: "#DADADA",
-                marginTop: 8,
-                // paddingVertical: 20,
-                paddingHorizontal: 15,
+                fontSize: 18,
+                color: "#a3a3a0",
               }}
             >
-              <View style={styles.item}>
-                <View
+              Bạn không có thông báo nào
+            </Text>
+          ) : (
+            <FlatList
+              style={{ flex: 1, width: "100%" }}
+              data={notiData}
+              renderItem={({ item, index }) => (
+                <TouchableOpacity
                   style={{
-                    flexDirection: "row",
-                    alignItems: "center",
-                    marginBottom: 5,
+                    borderBottomWidth: 0.5,
+                    borderColor: "#DADADA",
+                    marginTop: 8,
+                    paddingHorizontal: 15,
                   }}
                 >
-                  {/* {item.type === "promotion" && (
-                    <AntDesign
-                      name="gift"
-                      size={24}
-                      color="black"
-                      style={{ marginRight: 8 }}
-                    />
-                  )} */}
-                  <Text style={styles.text_title}>{item.title}</Text>
-                </View>
-                <Text style={[styles.text_content, { marginBottom: 5 }]}>
-                  {item.content}
-                </Text>
-                <Text style={[styles.text_date, { marginBottom: 10 }]}>
-                  {moment.utc(item.date_created).format("HH:mm DD-MM-YYYY")}
-                </Text>
-              </View>
-            </TouchableOpacity>
+                  <View style={styles.item}>
+                    <View
+                      style={{
+                        flexDirection: "row",
+                        alignItems: "center",
+                        marginBottom: 5,
+                      }}
+                    >
+                      <Text style={styles.text_title}>{item.title}</Text>
+                    </View>
+                    <Text style={[styles.text_content, { marginBottom: 5 }]}>
+                      {item.content}
+                    </Text>
+                    <Text style={[styles.text_date, { marginBottom: 10 }]}>
+                      {moment.utc(item.date_created).format("HH:mm DD-MM-YYYY")}
+                    </Text>
+                  </View>
+                </TouchableOpacity>
+              )}
+              keyExtractor={(item) => item.notify_id}
+              showsVerticalScrollIndicator={false}
+            />
           )}
-          keyExtractor={(item) => item.notify_id}
-          showsVerticalScrollIndicator={false}
-        />
+        </>
       )}
     </View>
   );

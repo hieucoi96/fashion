@@ -178,7 +178,6 @@ const Cart = ({ navigation }) => {
 
   return (
     <View style={styles.container}>
-      {/* <Modal animationType="fade" transparent={true} visible={loading}></Modal> */}
       <Modal
         animationType="fade"
         transparent={true}
@@ -360,166 +359,182 @@ const Cart = ({ navigation }) => {
                 <Text style={styles.text_order}>Thay đổi</Text>
               </TouchableOpacity>
             </TouchableOpacity>
-            <FlashMessage
-              ref={modalFlash}
-              // position={ Platform.OS === 'ios' ? "top" : {top:StatusBar.currentHeight, left:0, right:0} }
-              floating={Platform.OS !== "ios"}
-            />
+            <FlashMessage ref={modalFlash} floating={Platform.OS !== "ios"} />
           </TouchableOpacity>
         )}
       </Modal>
       <View style={{ flex: 1, padding: 15 }}>
-        <FlatList
-          data={data}
-          renderItem={({ item }) => (
-            <TouchableOpacity
-              style={{ flexDirection: "row", marginBottom: 20 }}
-              onPress={() => {
-                setSelectedItem(item);
-                setModalVisible(true);
-                setSelectedTemp({
-                  variant_id: "",
-                  color: item.color,
-                  src: item.src,
-                  price: item.price,
-                });
-                setSelectedSize(item.size);
+        <>
+          {data.length === 0 ? (
+            <Text
+              style={{
+                fontSize: 18,
+                marginTop: 260,
+                color: "#a3a3a0",
+                textAlign: "center",
               }}
             >
-              <Image
-                style={{ width: 100, height: 139, marginRight: 10 }}
-                uri={item.src}
-              />
+              Không có sản phẩm nào
+            </Text>
+          ) : (
+            <FlatList
+              data={data}
+              renderItem={({ item }) => (
+                <TouchableOpacity
+                  style={{
+                    flexDirection: "row",
+                    marginBottom: 20,
+                  }}
+                  onPress={() => {
+                    setSelectedItem(item);
+                    setModalVisible(true);
+                    setSelectedTemp({
+                      variant_id: "",
+                      color: item.color,
+                      src: item.src,
+                      price: item.price,
+                    });
+                    setSelectedSize(item.size);
+                  }}
+                >
+                  <Image
+                    style={{ width: 100, height: 139, marginRight: 10 }}
+                    uri={item.src}
+                  />
 
-              <View style={{ flexDirection: "column", flex: 1 }}>
-                <View style={{ flex: 1 }}>
-                  <View style={{ flexDirection: "row" }}>
-                    <Text
-                      style={[
-                        styles.text_small,
-                        {
-                          fontWeight: "bold",
-                          fontFamily: "Open_Sans_Bold",
-                          textTransform: "uppercase",
-                        },
-                      ]}
-                    >
-                      {item.status}
-                    </Text>
+                  <View style={{ flexDirection: "column", flex: 1 }}>
+                    <View style={{ flex: 1 }}>
+                      <View style={{ flexDirection: "row" }}>
+                        <Text
+                          style={[
+                            styles.text_small,
+                            {
+                              fontWeight: "bold",
+                              fontFamily: "Open_Sans_Bold",
+                              textTransform: "uppercase",
+                            },
+                          ]}
+                        >
+                          {item.status}
+                        </Text>
+                      </View>
+                      <Text style={styles.text_normal}>{item.name}</Text>
+                      <Text style={[styles.text_small, { marginTop: 1 }]}>
+                        {item.color}
+                      </Text>
+                      <Text style={[styles.text_small, { marginTop: 2 }]}>
+                        Size: {item.size}
+                      </Text>
+                    </View>
+                    <View>
+                      <NumberFormat
+                        value={item.old_price}
+                        displayType={"text"}
+                        thousandSeparator={true}
+                        suffix={" đ"}
+                        renderText={(value, props) => (
+                          <Text style={styles.text_old_price} {...props}>
+                            {value}
+                          </Text>
+                        )}
+                      />
+
+                      <NumberFormat
+                        value={item.price}
+                        displayType={"text"}
+                        thousandSeparator={true}
+                        suffix={" đ"}
+                        renderText={(value, props) => (
+                          <Text style={styles.text_normal} {...props}>
+                            {value}
+                          </Text>
+                        )}
+                      />
+                    </View>
                   </View>
-                  <Text style={styles.text_normal}>{item.name}</Text>
-                  <Text style={[styles.text_small, { marginTop: 1 }]}>
-                    {item.color}
-                  </Text>
-                  <Text style={[styles.text_small, { marginTop: 2 }]}>
-                    Size: {item.size}
-                  </Text>
-                </View>
-                <View>
-                  <NumberFormat
-                    value={item.old_price}
-                    displayType={"text"}
-                    thousandSeparator={true}
-                    suffix={" đ"}
-                    renderText={(value, props) => (
-                      <Text style={styles.text_old_price} {...props}>
-                        {value}
-                      </Text>
-                    )}
-                  />
+                  <View>
+                    <View style={{ flex: 1 }}>
+                      <TouchableOpacity
+                        style={{ alignSelf: "flex-end", marginRight: -4 }}
+                        onPress={() => removeItem(item.variant_id)}
+                      >
+                        <EvilIcons name="close" size={24} color="black" />
+                      </TouchableOpacity>
+                    </View>
 
-                  <NumberFormat
-                    value={item.price}
-                    displayType={"text"}
-                    thousandSeparator={true}
-                    suffix={" đ"}
-                    renderText={(value, props) => (
-                      <Text style={styles.text_normal} {...props}>
-                        {value}
+                    <View
+                      style={{ flexDirection: "row", alignItems: "center" }}
+                    >
+                      <TouchableOpacity
+                        style={{ padding: 5 }}
+                        onPress={() => {
+                          setLoading(true);
+                          instance
+                            .post("/users/addItemToCart", {
+                              variant_id: item.variant_id,
+                              quantity: -1,
+                            })
+                            .then(function (response) {
+                              dispatch(decreaseQuantity(item));
+                            })
+                            .catch(function (error) {
+                              console.log(error);
+                              Alert.alert(
+                                "Thông báo",
+                                "Có lỗi xảy ra: " + error.message
+                              );
+                            })
+                            .then(function () {
+                              setLoading(false);
+                            });
+                        }}
+                      >
+                        <AntDesign name="minus" size={16} color="black" />
+                      </TouchableOpacity>
+                      <Text
+                        style={[
+                          styles.text_normal,
+                          { width: 20, textAlign: "center" },
+                        ]}
+                        numberOfLines={1}
+                      >
+                        {item.quantity}
                       </Text>
-                    )}
-                  />
-                </View>
-              </View>
-              <View>
-                <View style={{ flex: 1 }}>
-                  <TouchableOpacity
-                    style={{ alignSelf: "flex-end", marginRight: -4 }}
-                    onPress={() => removeItem(item.variant_id)}
-                  >
-                    <EvilIcons name="close" size={24} color="black" />
-                  </TouchableOpacity>
-                </View>
-
-                <View style={{ flexDirection: "row", alignItems: "center" }}>
-                  <TouchableOpacity
-                    style={{ padding: 5 }}
-                    onPress={() => {
-                      setLoading(true);
-                      instance
-                        .post("/users/addItemToCart", {
-                          variant_id: item.variant_id,
-                          quantity: -1,
-                        })
-                        .then(function (response) {
-                          dispatch(decreaseQuantity(item));
-                        })
-                        .catch(function (error) {
-                          console.log(error);
-                          Alert.alert(
-                            "Thông báo",
-                            "Có lỗi xảy ra: " + error.message
-                          );
-                        })
-                        .then(function () {
-                          setLoading(false);
-                        });
-                    }}
-                  >
-                    <AntDesign name="minus" size={16} color="black" />
-                  </TouchableOpacity>
-                  <Text
-                    style={[
-                      styles.text_normal,
-                      { width: 20, textAlign: "center" },
-                    ]}
-                    numberOfLines={1}
-                  >
-                    {item.quantity}
-                  </Text>
-                  <TouchableOpacity
-                    style={{ padding: 5 }}
-                    onPress={() => {
-                      setLoading(true);
-                      instance
-                        .post("/users/addItemToCart", {
-                          variant_id: item.variant_id,
-                          quantity: 1,
-                        })
-                        .then(function (response) {
-                          dispatch(increaseQuantity(item));
-                        })
-                        .catch(function (error) {
-                          console.log(error);
-                          Alert.alert(
-                            "Thông báo",
-                            "Có lỗi xảy ra: " + error.message
-                          );
-                        })
-                        .then(function () {
-                          setLoading(false);
-                        });
-                    }}
-                  >
-                    <AntDesign name="plus" size={16} color="black" />
-                  </TouchableOpacity>
-                </View>
-              </View>
-            </TouchableOpacity>
+                      <TouchableOpacity
+                        style={{ padding: 5 }}
+                        onPress={() => {
+                          setLoading(true);
+                          instance
+                            .post("/users/addItemToCart", {
+                              variant_id: item.variant_id,
+                              quantity: 1,
+                            })
+                            .then(function (response) {
+                              dispatch(increaseQuantity(item));
+                            })
+                            .catch(function (error) {
+                              console.log(error);
+                              Alert.alert(
+                                "Thông báo",
+                                "Có lỗi xảy ra: " + error.message
+                              );
+                            })
+                            .then(function () {
+                              setLoading(false);
+                            });
+                        }}
+                      >
+                        <AntDesign name="plus" size={16} color="black" />
+                      </TouchableOpacity>
+                    </View>
+                  </View>
+                </TouchableOpacity>
+              )}
+              keyExtractor={(item) => item.variant_id}
+              showsVerticalScrollIndicator={false}
+            />
           )}
-          keyExtractor={(item) => item.variant_id}
-          showsVerticalScrollIndicator={false}
-        />
+        </>
       </View>
       <View style={styles.bottom_container}>
         <View style={{ marginTop: 10, flexDirection: "row" }}>

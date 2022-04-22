@@ -19,6 +19,7 @@ const Register = ({ navigation }) => {
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
+  const dispatch = useDispatch();
 
   const instance = axios.create({
     baseURL: "https://hieuhmph12287-lab5.herokuapp.com/",
@@ -61,10 +62,6 @@ const Register = ({ navigation }) => {
             text: "OK",
             onPress: () => {
               dispatch(addUserInfo(response.data));
-              navigation.navigate("MainStack", {
-                params: { phone_number },
-                screen: "Home",
-              });
             },
           },
         ]);

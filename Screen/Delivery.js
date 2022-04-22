@@ -1,43 +1,40 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import {
   StyleSheet,
   Text,
   View,
   FlatList,
   TouchableOpacity,
+  Alert,
+  Modal,
+  ActivityIndicator,
 } from "react-native";
 import NumberFormat from "react-number-format";
 import { AntDesign } from "@expo/vector-icons";
 import { useDispatch, useSelector } from "react-redux";
-import { useIsFocused } from "@react-navigation/native";
+import { addUserInfo } from "../store/itemAction";
+import axios from "axios";
 
 const Delivery = ({ route, navigation }) => {
-  const isFocused = useIsFocused();
+  const dispatch = useDispatch();
+  const token = useSelector((state) => state.userReducer.token);
+  const instance = axios.create({
+    baseURL: "https://hieuhmph12287-lab5.herokuapp.com/",
+    headers: { "x-access-token": token },
+  });
   const delivery = useSelector((state) => state.userReducer.delivery);
 
-  const [addressList, setData] = useState([]);
+  const [loading, setLoading] = useState(false);
   const { total_product, total_value } = route.params;
-  const { address } = route.params ?? {};
   const { data } = route.params ?? {};
 
-  useEffect(() => {
-    setData(delivery);
-  }, [isFocused]);
-
-  useEffect(() => {
-    if (address !== undefined) {
-      if (address.default) {
-        addressList.forEach(function (part, index, arr) {
-          arr[index].default = false;
-        });
-      }
-      setData((oldData) => [...oldData, address]);
-    }
-  }, [address]);
-
   function openPayment(item) {
+    if (delivery.length === 0) {
+      Alert.alert("Thông báo", "Vui lòng thêm địa chỉ giao hàng!");
+      return;
+    }
     if (item === undefined) {
-      item = addressList.find((item) => item.default_address === true);
+      item = delivery.find((item) => item.default_address === true);
     }
     navigation.navigate("Payment", {
       item: item,
@@ -47,8 +44,42 @@ const Delivery = ({ route, navigation }) => {
     });
   }
 
+  const handleDeleteAddress = (delivery_id) => {
+    setLoading(true);
+    instance
+      .get("/users/deleteDeliveryAddress/" + delivery_id)
+      .then(function (response) {
+        setLoading(false);
+        dispatch(addUserInfo(response.data));
+      })
+      .catch(function (error) {
+        setLoading(false);
+        Alert.alert("Thông báo", "Có lỗi xảy ra: " + error.message);
+        console.log(error);
+      });
+  };
+
   return (
     <View style={styles.container}>
+      <Modal
+        animationType="fade"
+        transparent={true}
+        visible={loading}
+        onRequestClose={() => {}}
+      >
+        <View style={{ flex: 1, backgroundColor: "rgba(0,0,0,0.5)" }}>
+          <View style={{ flex: 1, width: "100%" }}>
+            <View
+              style={{
+                flex: 1,
+                justifyContent: "center",
+              }}
+            >
+              <ActivityIndicator size="large" color={"#E7F3F1"} />
+            </View>
+          </View>
+        </View>
+      </Modal>
       <View style={{ flex: 1 }}>
         <TouchableOpacity
           style={styles.add_address_contain}
@@ -61,7 +92,7 @@ const Delivery = ({ route, navigation }) => {
         </TouchableOpacity>
         <FlatList
           style={{ paddingHorizontal: "4%" }}
-          data={addressList}
+          data={delivery}
           renderItem={({ item, index }) => (
             <TouchableOpacity
               style={styles.item}
@@ -82,7 +113,13 @@ const Delivery = ({ route, navigation }) => {
                 >
                   {item.name_receiver} - {item.phone_receiver}
                 </Text>
-                <Text style={styles.text_small}>Sửa</Text>
+                <TouchableOpacity
+                  onPress={() => {
+                    handleDeleteAddress(item.delivery_id);
+                  }}
+                >
+                  <Text style={styles.text_small}>Xóa</Text>
+                </TouchableOpacity>
               </View>
               <Text style={[styles.text_normal, { marginTop: 3 }]}>
                 {item.address_detail}

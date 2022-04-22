@@ -58,13 +58,8 @@ const ProductDetails = ({ route, navigation }) => {
 
   const [open, setOpen] = useState(false);
   const [value, setValue] = useState("");
-  const [items, setItems] = useState([
-    { label: "S", value: "S" },
-    { label: "M", value: "M" },
-    { label: "L", value: "L" },
-    { label: "XL", value: "XL" },
-    { label: "XXL", value: "XXL" },
-  ]);
+  const [items, setItems] = useState([]);
+  const [outOfStock, setStock] = useState(false);
   const [relatedProduct, setRelatedProduct] = useState(null);
 
   const [currentInfo, setCurrentInfo] = useState({
@@ -99,10 +94,6 @@ const ProductDetails = ({ route, navigation }) => {
 
   useEffect(() => {
     navigation.setOptions({
-      // headerStyle: {
-      //     // opacity: headerOpacity,
-      //     backgroundColor: "green",
-      // },
       headerBackground: () => (
         <Animated.View
           style={{
@@ -134,23 +125,47 @@ const ProductDetails = ({ route, navigation }) => {
   }, [currentInfo]);
 
   useEffect(() => {
+    setStock(false);
+    if (value) {
+      let index = value.indexOf(".");
+      let v_id = value.substring(0, index);
+      let currentItem = item.variant.find((item) => item.variant_id === v_id);
+      if (currentItem) {
+        if (currentItem.stock === 0) {
+          setStock(true);
+        }
+      }
+    }
+  }, [value]);
+
+  useEffect(() => {
     setLoading(true);
+    const controller = new AbortController();
     instance
-      .post("/products/getRelatedProducts", {
-        collection_id: item.collection_id,
-        type: item.type,
-        product_id: item.product_id,
-      })
+      .post(
+        "/products/getRelatedProducts",
+        {
+          collection_id: item.collection_id,
+          type: item.type,
+          product_id: item.product_id,
+        },
+        { signal: controller.signal }
+      )
       .then(function (response) {
         setRelatedProduct(response.data);
       })
       .catch(function (error) {
-        Alert.alert("Thông báo", "Có lỗi xảy ra: " + error.message);
-        console.log(error);
+        if (!axios.isCancel(error)) {
+          Alert.alert("Thông báo", "Có lỗi xảy ra: " + error.message);
+          console.log(error);
+        }
       })
       .then(function () {
         setLoading(false);
       });
+    return () => {
+      controller.abort();
+    };
   }, [item]);
 
   React.useLayoutEffect(() => {
@@ -303,6 +318,10 @@ const ProductDetails = ({ route, navigation }) => {
   };
 
   function addProductToCart(gotoCart) {
+    if (token === "1") {
+      dispatch(addUserInfo({ token: null }));
+      return;
+    }
     if (currentInfo.color === "") {
       showMessage({
         message: "Bạn chưa chọn màu!",
@@ -330,7 +349,6 @@ const ProductDetails = ({ route, navigation }) => {
 
     let index = value.indexOf(".");
     let v_id = value.substring(0, index);
-    let size = value.substring(index + 1);
 
     instance
       .post("/users/addItemToCart", { variant_id: v_id, quantity: 1 })
@@ -348,6 +366,10 @@ const ProductDetails = ({ route, navigation }) => {
   }
 
   const changeFavorite = () => {
+    if (token === "1") {
+      dispatch(addUserInfo({ token: null }));
+      return;
+    }
     instance
       .get("/users/addFavorite/" + item.product_id)
       .then(function (response) {})
@@ -363,6 +385,10 @@ const ProductDetails = ({ route, navigation }) => {
     const animationProgress = useRef(new Animated.Value(fav ? 1 : 0)).current;
 
     const changeFavorite = () => {
+      if (token === "1") {
+        dispatch(addUserInfo({ token: null }));
+        return;
+      }
       animationProgress.setValue(0.15);
       if (!fav) {
         Animated.timing(animationProgress, {
@@ -435,7 +461,6 @@ const ProductDetails = ({ route, navigation }) => {
     <Animated.ScrollView
       ref={scrollViewRef}
       showsVerticalScrollIndicator={false}
-      // onMomentumScrollEnd={(event) => setCurrentY(event.nativeEvent.contentOffset.y)}
       scrollEventThrottle={16}
       automaticallyAdjustContentInsets
       onScroll={Animated.event(
@@ -456,6 +481,9 @@ const ProductDetails = ({ route, navigation }) => {
             hasParallaxImages={true}
             inactiveSlideScale={1}
             onSnapToItem={(index) => setActiveSlide(index)}
+            enableMomentum={true}
+            decelerationRate={"fast"}
+            disableIntervalMomentum={true}
           />
           <Pagination
             dotsLength={result.length}
@@ -585,18 +613,21 @@ const ProductDetails = ({ route, navigation }) => {
             />
           </View>
         </View>
-        <TouchableOpacity
-          style={styles.add_to_cart}
-          ref={add_to_cart}
-          onPress={() => {
-            addProductToCart(false);
-          }}
-          activeOpacity={0.8}
-        >
-          <Text style={styles.text_add_to_cart}>THÊM VÀO GIỎ HÀNG</Text>
-        </TouchableOpacity>
+        {!outOfStock && (
+          <TouchableOpacity
+            style={styles.add_to_cart}
+            ref={add_to_cart}
+            onPress={() => {
+              addProductToCart(false);
+            }}
+            activeOpacity={0.8}
+          >
+            <Text style={styles.text_add_to_cart}>THÊM VÀO GIỎ HÀNG</Text>
+          </TouchableOpacity>
+        )}
         <Ripple
           style={styles.button_buy}
+          disabled={outOfStock}
           onPress={() => {
             addProductToCart(true);
           }}
@@ -604,7 +635,9 @@ const ProductDetails = ({ route, navigation }) => {
           rippleOpacity={0.4}
           rippleDuration={600}
         >
-          <Text style={styles.text_buy}>Mua Ngay</Text>
+          <Text style={styles.text_buy}>
+            {outOfStock ? "HẾT HÀNG" : "Mua Ngay"}
+          </Text>
         </Ripple>
         <View
           style={{
@@ -678,28 +711,10 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#ffffff",
   },
-  customSlide: {},
   customImage: {
     flex: 1,
     resizeMode: "contain",
   },
-  // buttons: {
-  //   zIndex: 1,
-  //   height: 15,
-  //   marginTop: "-5%",
-  //   justifyContent: "center",
-  //   alignItems: "center",
-  //   flexDirection: "row",
-  // },
-  // icon: {
-  //   zIndex: 1,
-  //   height: 15,
-  //   marginTop: "-5%",
-  //   justifyContent: "center",
-  //   alignItems: "center",
-  //   flexDirection: "row",
-  //   alignSelf: "flex-end",
-  // },
   button: {
     width: 15,
     height: 15,

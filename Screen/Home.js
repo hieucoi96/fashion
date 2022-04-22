@@ -23,11 +23,7 @@ const ItemHorizontal = ({ item, onPress, backgroundColor, textColor }) => (
     style={[styles.itemHorizontal, backgroundColor]}
     activeOpacity={1}
   >
-    <Image
-      style={styles.imgHorizontal}
-      defaultSource={require("../assets/empty_image.png")}
-      uri={item.src}
-    />
+    <Image style={styles.imgHorizontal} uri={item.src} />
     <Text style={[styles.nameHorizontal, textColor]} numberOfLines={1}>
       {item.name}
     </Text>
@@ -52,11 +48,7 @@ const ItemVertical = ({ item, onPress, backgroundColor, textColor }) => (
     style={[styles.itemVertical, backgroundColor]}
     activeOpacity={1}
   >
-    <Image
-      style={styles.imgVertical}
-      defaultSource={require("../assets/empty_image.png")}
-      uri={item.src}
-    />
+    <Image style={styles.imgVertical} uri={item.src} />
     <Text style={[styles.nameVertical, textColor]}>{item.name}</Text>
   </TouchableOpacity>
 );

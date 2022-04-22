@@ -113,9 +113,6 @@ const Payment = ({ route, navigation }) => {
           style={styles.centeredView}
           onPress={() => {
             setModalVisible(!modalVisible);
-            if (value === "cash") {
-              // openOrder();
-            }
           }}
           activeOpacity={1}
         >
@@ -451,9 +448,6 @@ const Payment = ({ route, navigation }) => {
               setModalVisible(true);
               timerRef.current = setTimeout(function () {
                 setModalVisible(false);
-                // if (value === "cash") {
-                //   openOrder();
-                // }
               }, 3500);
             }
           }}

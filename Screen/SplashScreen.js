@@ -1,10 +1,12 @@
 import React from "react";
 import { StyleSheet, View } from "react-native";
 import LottieView from "lottie-react-native";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
+import { addUserInfo } from "../store/itemAction";
 
 const SplashScreen = ({ navigation }) => {
   const token = useSelector((state) => state.userReducer.token);
+  const dispatch = useDispatch();
   //Sử dụng sdk lottie view hiển thị hình ảnh động
   return (
     <View style={styles.container}>
@@ -15,12 +17,12 @@ const SplashScreen = ({ navigation }) => {
         speed={1.5}
         autoPlay
         onAnimationFinish={() => {
-          console.log("hhh");
+          //Chỉ chạy 1 lần splash screen
+          dispatch(addUserInfo({ showSplash: false }));
+          //Check xem người dùng đã đăng nhập hay chưa dựa vào token để mở màn login hoặc Home
           if (!token) {
-            console.log("log");
             navigation.navigate("Login");
           } else {
-            console.log("main");
             navigation.navigate("MainStack");
           }
         }}
