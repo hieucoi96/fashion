@@ -3,10 +3,7 @@ import {
   StyleSheet,
   Text,
   View,
-  FlatList,
-  Image,
-  TouchableOpacity,
-  TextInput,
+  // FlatList,
   ActivityIndicator,
   Alert,
 } from "react-native";
@@ -14,7 +11,9 @@ import { AntDesign } from "@expo/vector-icons";
 import { useDispatch, useSelector } from "react-redux";
 import { useIsFocused } from "@react-navigation/native";
 import axios from "axios";
-import moment from "moment";
+import { FlatList } from "react-native-gesture-handler";
+
+import Item from "../Component/SwipeItem";
 
 const data_notification = [
   {
@@ -112,32 +111,28 @@ const Notification = ({ navigation }) => {
               style={{ flex: 1, width: "100%" }}
               data={notiData}
               renderItem={({ item, index }) => (
-                <TouchableOpacity
-                  style={{
-                    borderBottomWidth: 0.5,
-                    borderColor: "#DADADA",
-                    marginTop: 8,
-                    paddingHorizontal: 15,
+                <Item
+                  onSwipe={() => {
+                    const newItems = [...notiData];
+                    newItems.splice(newItems.indexOf(item), 1);
+                    setNotiData(newItems);
+                    instance
+                      .post("/notify/deleteNotiByUser", {
+                        notify_id: item.notify_id,
+                      })
+                      .then(function (response) {
+                        console.log(response.data);
+                      })
+                      .catch(function (error) {
+                        Alert.alert(
+                          "Thông báo",
+                          "Có lỗi xảy ra: " + error.message
+                        );
+                        console.log(error);
+                      });
                   }}
-                >
-                  <View style={styles.item}>
-                    <View
-                      style={{
-                        flexDirection: "row",
-                        alignItems: "center",
-                        marginBottom: 5,
-                      }}
-                    >
-                      <Text style={styles.text_title}>{item.title}</Text>
-                    </View>
-                    <Text style={[styles.text_content, { marginBottom: 5 }]}>
-                      {item.content}
-                    </Text>
-                    <Text style={[styles.text_date, { marginBottom: 10 }]}>
-                      {moment.utc(item.date_created).format("HH:mm DD-MM-YYYY")}
-                    </Text>
-                  </View>
-                </TouchableOpacity>
+                  {...{ item }}
+                />
               )}
               keyExtractor={(item) => item.notify_id}
               showsVerticalScrollIndicator={false}
@@ -155,26 +150,6 @@ const styles = StyleSheet.create({
     backgroundColor: "#ffffff",
     alignItems: "center",
     justifyContent: "center",
-  },
-  text_title: {
-    fontStyle: "normal",
-    fontFamily: "Open_Sans_Bold",
-    fontWeight: "bold",
-    fontSize: 14,
-    lineHeight: 21,
-  },
-  text_content: {
-    fontStyle: "normal",
-    fontWeight: "normal",
-    fontSize: 14,
-    lineHeight: 21,
-  },
-  text_date: {
-    fontStyle: "normal",
-    fontWeight: "normal",
-    fontSize: 10,
-    lineHeight: 15,
-    color: "#AEAEB2",
   },
 });
 

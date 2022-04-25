@@ -81,16 +81,7 @@ const Home = ({ navigation, route }) => {
         setVerticalList(results[1].data);
       })
       .catch(function (error) {
-        //Check token đã hết hạn chưa trong trương hợp user auto login
-        if (error.message === "Invalid Token") {
-          Alert.alert(
-            "Thông báo",
-            "Phiên đăng nhập hết hạn. Vui lòng đăng nhập lại!",
-            [{ text: "OK", onPress: () => dispatch(logOut()) }]
-          );
-        } else {
-          Alert.alert("Thông báo", "Có lỗi xảy ra: " + error.message);
-        }
+        Alert.alert("Thông báo", "Có lỗi xảy ra: " + error.message);
       })
       .then(function () {
         setLoading(false);

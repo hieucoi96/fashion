@@ -15,6 +15,7 @@ import {
 import NumberFormat from "react-number-format";
 import { useDispatch, useSelector } from "react-redux";
 import { changeFav, addUserInfo } from "../store/itemAction";
+import { logOut } from "../store/itemAction";
 import axios from "axios";
 
 const heartOutline = require("../assets/icon_heart_outline.png");
@@ -105,6 +106,14 @@ const Favorite = ({ navigation }) => {
           if (!axios.isCancel(error)) {
             Alert.alert("Thông báo", "Có lỗi xảy ra: " + error.message);
             console.log(error);
+          }
+          //Check token đã hết hạn chưa trong trương hợp user auto login
+          if (error.message === "Invalid Token") {
+            Alert.alert(
+              "Thông báo",
+              "Phiên đăng nhập hết hạn. Vui lòng đăng nhập lại!",
+              [{ text: "OK", onPress: () => dispatch(logOut()) }]
+            );
           }
         })
         .then(function () {
