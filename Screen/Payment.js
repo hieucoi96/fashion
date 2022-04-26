@@ -82,9 +82,30 @@ const Payment = ({ route, navigation }) => {
           Alert.alert("Thông báo", "Mã khuyến mại đã được áp dụng!");
         })
         .catch(function (error) {
-          console.log(error);
+          console.log(error.response.data);
           if (error.response.status === 409) {
-            Alert.alert("Thông báo", "Mã khuyến mại không hợp lệ!");
+            if (
+              error.response.data.message ===
+              "Discount Code Has Exceed The Usage Limit."
+            ) {
+              Alert.alert(
+                "Thông báo",
+                "Rất tiếc mã giảm giá bạn dùng đã hết số lượt sử dụng."
+              );
+            } else if (
+              error.response.data.message ===
+              "User Has Used Up This Discount Code."
+            ) {
+              Alert.alert(
+                "Thông báo",
+                "Bạn đã sử dụng hết lượt khuyến mại của mã giảm giá này."
+              );
+            } else {
+              Alert.alert(
+                "Thông báo",
+                "Mã khuyến mại không tồn tại hoặc đã hết hạn sử dụng!"
+              );
+            }
           }
         })
         .then(function () {
@@ -438,8 +459,30 @@ const Payment = ({ route, navigation }) => {
                   }, 3500);
                 })
                 .catch(function (error) {
-                  console.log(error.response);
-                  Alert.alert("Thông báo", "Có lỗi xảy ra: " + error.message);
+                  console.log(
+                    error.response.status + " - " + error.response.message
+                  );
+                  if (
+                    error.response.status === 400 &&
+                    error.response.data.message ===
+                      "Product is currently out of stock"
+                  ) {
+                    Alert.alert(
+                      "Đặt hàng không thành công",
+                      "Rất tiếc trong giỏ hàng của bạn có sản phẩm đã hết hoặc không đủ số lượng."
+                    );
+                  } else if (
+                    error.response.status === 409 &&
+                    error.response.data.message ===
+                      "Discount Code Has Exceed The Usage Limit."
+                  ) {
+                    Alert.alert(
+                      "Đặt hàng không thành công",
+                      "Rất tiếc mã giảm giá bạn dùng đã hết số lượt sử dụng."
+                    );
+                  } else {
+                    Alert.alert("Thông báo", "Có lỗi xảy ra: " + error.message);
+                  }
                 })
                 .then(function () {
                   setOrderLoading(false);

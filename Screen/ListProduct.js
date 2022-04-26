@@ -142,7 +142,9 @@ const ListProduct = ({ route, navigation }) => {
           {selectedView === "grid" ? (
             <View>
               <Text style={styles.text_status}>{item.status}</Text>
-              <Text style={styles.text_name}>{item.name}</Text>
+              <Text style={styles.text_name} numberOfLines={2}>
+                {item.name}
+              </Text>
 
               <NumberFormat
                 value={item.old_price}
@@ -151,7 +153,10 @@ const ListProduct = ({ route, navigation }) => {
                 thousandSeparator={true}
                 suffix={" đ"}
                 renderText={(value, props) => (
-                  <Text style={styles.text_old_price} {...props}>
+                  <Text
+                    style={[styles.text_old_price, { marginTop: 1 }]}
+                    {...props}
+                  >
                     {value}
                   </Text>
                 )}
@@ -172,11 +177,19 @@ const ListProduct = ({ route, navigation }) => {
             </View>
           ) : (
             <View style={{ flexDirection: "row" }}>
-              <View>
+              <View style={{ width: "75%" }}>
                 <Text style={styles.text_status}>{item.status}</Text>
-                <Text style={styles.text_name}>{item.name}</Text>
+                <Text style={styles.text_name} numberOfLines={2}>
+                  {item.name}
+                </Text>
               </View>
-              <View style={{ justifyContent: "flex-end", flex: 1 }}>
+              <View
+                style={{
+                  flexDirection: "column",
+                  justifyContent: "flex-start",
+                  flex: 1,
+                }}
+              >
                 <NumberFormat
                   value={item.old_price}
                   className="foo"
@@ -185,7 +198,10 @@ const ListProduct = ({ route, navigation }) => {
                   suffix={" đ"}
                   renderText={(value, props) => (
                     <Text
-                      style={[styles.text_old_price, { alignSelf: "flex-end" }]}
+                      style={[
+                        styles.text_old_price,
+                        { alignSelf: "flex-end", marginTop: 7 },
+                      ]}
                       {...props}
                     >
                       {value}
@@ -390,7 +406,6 @@ const styles = StyleSheet.create({
     lineHeight: 21,
   },
   text_old_price: {
-    marginTop: 1,
     fontFamily: "Open_Sans",
     fontStyle: "normal",
     fontWeight: "normal",

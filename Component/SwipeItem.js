@@ -78,7 +78,7 @@ const Item = ({ item, onSwipe }) => {
       cond(eq(state, State.END), [
         set(translateX, timing({ clock, from: translateX, to })),
         set(offsetX, translateX),
-        cond(eq(to, -width), delay(set(shouldRemove, 1), 300)),
+        cond(eq(to, -width), delay(set(shouldRemove, 1), 350)),
       ]),
       cond(shouldRemove, [
         set(height, timing({ from: HEIGHT, to: 0 })),

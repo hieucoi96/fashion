@@ -10,14 +10,10 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "center",
     height: HEIGHT,
-    // borderBottomWidth: StyleSheet.hairlineWidth,
-    // borderColor: "#e2e3e4",
     borderBottomWidth: 0.5,
     borderColor: "#DADADA",
   },
   item: {
-    borderBottomWidth: 0.5,
-    borderColor: "#DADADA",
     paddingTop: 8,
     paddingHorizontal: 15,
   },
@@ -60,7 +56,7 @@ const ItemLayout = ({ item: { content, title, date_created } }) => {
         <Text style={[styles.text_content, { marginBottom: 7 }]}>
           {content}
         </Text>
-        <Text style={[styles.text_date, { marginBottom: 12 }]}>
+        <Text style={[styles.text_date, {}]}>
           {moment.utc(date_created).format("HH:mm DD-MM-YYYY")}
         </Text>
       </View>

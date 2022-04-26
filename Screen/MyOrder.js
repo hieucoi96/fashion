@@ -56,9 +56,11 @@ const MyOrder = ({ navigation }) => {
     } else if (status === "Đã hủy") {
       color = "#F44336";
     } else if (status === "Đang vận chuyển") {
-      color = "#0075FF";
+      color = "#ffb700";
     } else if (status === "Đã hoàn thành") {
       color = "#4CAF50";
+    } else if (status === "Đã xác nhận") {
+      color = "#0075FF";
     }
     return color;
   };

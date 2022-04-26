@@ -60,7 +60,7 @@ const ProductDetails = ({ route, navigation }) => {
   const [value, setValue] = useState("");
   const [items, setItems] = useState([]);
   const [outOfStock, setStock] = useState(false);
-  const [relatedProduct, setRelatedProduct] = useState(null);
+  const [relatedProduct, setRelatedProduct] = useState([]);
 
   const [currentInfo, setCurrentInfo] = useState({
     price: item.variant[0].price,
@@ -673,13 +673,29 @@ const ProductDetails = ({ route, navigation }) => {
               <ActivityIndicator size="large" color="#000000" />
             </View>
           ) : (
-            <FlatList
-              horizontal
-              data={relatedProduct}
-              renderItem={renderItem}
-              keyExtractor={(item) => item.product_id}
-              showsHorizontalScrollIndicator={false}
-            />
+            <>
+              {relatedProduct.length === 0 ? (
+                <View
+                  style={{
+                    height: 180,
+                    justifyContent: "center",
+                    marginBottom: 24,
+                  }}
+                >
+                  <Text style={{ textAlign: "center", color: "gray" }}>
+                    Không tìm thấy sản phẩm nào tương tự
+                  </Text>
+                </View>
+              ) : (
+                <FlatList
+                  horizontal
+                  data={relatedProduct}
+                  renderItem={renderItem}
+                  keyExtractor={(item) => item.product_id}
+                  showsHorizontalScrollIndicator={false}
+                />
+              )}
+            </>
           )}
         </View>
         <Parabolic
