@@ -88,7 +88,7 @@ function getHeaderTitle(route) {
     case "Search":
       return null;
     case "Favorite":
-      return "Favorite";
+      return "Yêu Thích";
     case "Personal":
       return null;
   }
@@ -112,6 +112,7 @@ function PersonalStack() {
         name={"Personal"}
         component={Personal}
         options={({ route, navigation }) => ({
+          title: "Cá Nhân",
           headerTitleAlign: "center",
           headerLeft: () => null,
           headerRight: () => <ShoppingCartIcon />,
@@ -121,6 +122,7 @@ function PersonalStack() {
         name={"Notification"}
         component={Notification}
         options={({ route, navigation }) => ({
+          title: "Thông Báo",
           headerTitleAlign: "center",
           headerLeft: () => (
             <TouchableOpacity
@@ -140,6 +142,7 @@ function PersonalStack() {
         name={"MyOrder"}
         component={MyOrder}
         options={({ route, navigation }) => ({
+          title: "Đơn hàng của bạn",
           headerTitleAlign: "center",
           headerLeft: () => (
             <TouchableOpacity
@@ -178,6 +181,7 @@ function PersonalStack() {
         name={"ChangeInfo"}
         component={ChangeInfo}
         options={({ route, navigation }) => ({
+          title: "Thay đổi thông tin",
           headerTitleAlign: "center",
           headerLeft: () => (
             <TouchableOpacity
@@ -313,12 +317,16 @@ function GenderStack() {
               borderBottomWidth: 2,
               borderColor: "#000000",
             },
+            labelStyle: {
+              fontSize: 14,
+              fontWeight: "bold",
+            },
             // activeTintColor: "red",
             // inactiveTintColor: "lightgray",
           }}
         >
-          <TabGender.Screen name="Female" component={Female} />
-          <TabGender.Screen name="Male" component={Male} />
+          <TabGender.Screen name="Nữ" component={Female} />
+          <TabGender.Screen name="Nam" component={Male} />
         </TabGender.Navigator>
       )}
     </SafeAreaView>
@@ -626,7 +634,7 @@ function Route() {
             component={Cart}
             options={({ route, navigation }) => ({
               headerTitleAlign: "center",
-              title: "Cart",
+              title: "Giỏ Hàng",
               headerLeft: () => (
                 <TouchableOpacity
                   style={{ padding: 15 }}
@@ -646,7 +654,7 @@ function Route() {
             component={Delivery}
             options={({ route, navigation }) => ({
               headerTitleAlign: "center",
-              title: "Delivery",
+              title: "Địa chỉ giao hàng",
               headerLeft: () => (
                 <TouchableOpacity
                   style={{ padding: 15 }}
@@ -666,7 +674,7 @@ function Route() {
             component={AddAddress}
             options={({ route, navigation }) => ({
               headerTitleAlign: "center",
-              title: "Add Delivery Address",
+              title: "Thêm địa chỉ giao hàng",
               headerLeft: () => (
                 <TouchableOpacity
                   style={{ padding: 15 }}
@@ -686,7 +694,7 @@ function Route() {
             component={Payment}
             options={({ route, navigation }) => ({
               headerTitleAlign: "center",
-              title: "Payment",
+              title: "Thanh Toán",
               headerLeft: () => (
                 <TouchableOpacity
                   style={{ padding: 15 }}
@@ -706,7 +714,7 @@ function Route() {
             component={OrderDetails}
             options={({ route, navigation }) => ({
               headerTitleAlign: "center",
-              title: "OrderDetails",
+              title: "Chi tiết đơn hàng",
               headerLeft: () => (
                 <TouchableOpacity
                   style={{ padding: 15 }}
@@ -733,7 +741,7 @@ function Route() {
             component={Review}
             options={({ route, navigation }) => ({
               headerTitleAlign: "center",
-              title: "Review",
+              title: "Đánh Giá",
               headerLeft: () => (
                 <TouchableOpacity
                   style={{ padding: 15 }}

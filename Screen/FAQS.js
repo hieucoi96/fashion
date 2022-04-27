@@ -86,40 +86,20 @@ const Sections_payment = [
 ];
 const Sections_account = [
   {
-    title: "Có thể đổi hàng sau khi đã nhận hàng không? 5",
+    title:
+      "Nếu tôi không đăng ký tài khoản ở Fasion thì có mua hàng được không",
     content:
-      "Hiện tại fashion chưa hỗ trợ đổi hàng. Trong trường hợp sản phẩm nhận được có vấn đề " +
-      ", bạn có thể yêu cầu Trả hàng / Hoàn tiền ngay trên ứng dụng. Để hạn chế các rắc rối phát sinh " +
-      "liên quan đến trả hàng, Người mua lưu ý cần phải đóng gói theo quy định về đóng gói hàng hóa " +
-      "trong Chính Sách Vận Chuyển và gửi trả sản phẩm bao gồm toàn bộ phụ kiện đi kèm, hóa đơn VAT, " +
-      "tem phiếu bảo hành... nếu có và sản phẩm phải trong tình trạng nguyên vẹn như khi nhận hàng. " +
-      "Fasion khuyến khích Người mua quay video hoặc chụp lại ảnh sản phẩm ngay khi nhận được để làm " +
-      "bằng chứng đối chiếu / khiếu nại về sau nếu cần.",
+      "Quý khách cần đăng ký tài khoản hoặc đăng nhập vào tài khoản (đã đăng ký) để mua hàng.\n\n Trường hợp chưa có tài khoản Quý khách vui lòng đăng kí.",
   },
   {
-    title: "Không áp dụng đổi hàng với sản phẩm nào?",
+    title:
+      "Nếu tôi muốn thay đổi thông tin tài khoản đã đăng ký thì phải làm sao?",
     content:
-      "-Sản phẩm mua đã quá thời hạn đổi theo quy định của hãng.\n" +
-      "-Không có hóa đơn mua hàng.\n" +
-      "-Sản phẩm không còn nhãn mác, phụ kiện, thẻ bài đính kèm. Sản phẩm sử dụng và bảo quản sai quy cách " +
-      "ghi trên HDSD ( In tem nhãn hàng hóa ), sản phẩm bị hư hỏng do va chạm hoặc ma sát với vật cứng " +
-      "làm trầy xước.\n" +
-      "-Sản phẩm phụ kiện, sản phẩm là quà tặng khuyến mại.\n" +
-      "-Sản phẩm đã qua sử dụng, sản phẩm bị dính bẩn, bị nhiễm mùi nước hoa, xà phòng, chất khử mùi cơ thể " +
-      "hay khói thuốc lá, hoặc các loại hóa mỹ phẩm khác…",
-  },
-  {
-    title: "Có thể trả lại hàng sau khi đã nhận hàng không?",
-    content:
-      "Quý khách có thể trả lại sản phẩm đã mua tại fasion trong vòng 7 ngày kể từ khi nhận hàng" +
-      " với đa số sản phẩm (trừ những sản phẩm có quy định khác) khi thỏa mãn các điều kiện sau: \n\n" +
-      "-Sản phẩm không có dấu hiệu đã qua sử dụng, còn nguyên tem, mác hay niêm phong của nhà sản xuất.\n" +
-      "-Sản phẩm còn đầy đủ phụ kiện hoặc phiếu bảo hành cùng quà tặng kèm theo (nếu có).\n" +
-      "-Sản phẩm không thanh toán bằng hình thức trả góp. \n" +
-      "-Sản phẩm không nằm trong danh mục hạn chế đổi - trả.\n" +
-      "-Để đảm bảo quyền lợi khách hàng và fashion có cơ sở làm việc với các bộ phận liên quan, " +
-      "tất cả yêu cầu trả sản phẩm quý khách cần cung cấp hình ảnh/clip sản phẩm. Fashion xin phép " +
-      "từ chối khi chưa nhận đủ thông tin hình ảnh từ quý khách.",
+      "Bước 1: Đăng nhập Tài Khoản\n" +
+      "Bước 2: Chọn Tab Cá Nhân\n" +
+      "Bước 3: Nhấn vào biểu tượng setting bên cạnh tên khách hàng\n" +
+      "Bước 4: Điền thông tin cập nhật\n" +
+      "Bước 5: Nhấp “Cập nhật” để hoàn tất thay đổi",
   },
 ];
 

@@ -18,6 +18,7 @@ import {
   decreaseQuantity,
   deleteItem,
   increaseQuantity,
+  addUserInfo,
 } from "../store/itemAction";
 import { useDispatch, useSelector } from "react-redux";
 import FlashMessage, { showMessage } from "react-native-flash-message";
@@ -56,6 +57,23 @@ const Cart = ({ navigation }) => {
   const [loading, setLoading] = useState(false);
   const [outOfStock, setOutOfStock] = useState(false);
   const fadeAnim = useState(new Animated.Value(1))[0];
+
+  useEffect(() => {
+    setLoading(true);
+    instance
+      .get("/users/getCartByUser")
+      .then(function (response) {
+        console.log(response.data);
+        dispatch(addUserInfo(response.data));
+      })
+      .catch(function (error) {
+        console.log(error);
+        Alert.alert("Thông báo", "Có lỗi xảy ra: " + error.message);
+      })
+      .then(function () {
+        setLoading(false);
+      });
+  }, []);
 
   useEffect(() => {
     let sumProduct = data.reduce(function (prev, current) {
@@ -180,6 +198,11 @@ const Cart = ({ navigation }) => {
             price: item.price,
           });
           setSelectedSize(item.size);
+          if (stock === 0) {
+            setOutOfStock(true);
+          } else {
+            setOutOfStock(false);
+          }
         }}
       >
         <Image
@@ -302,22 +325,27 @@ const Cart = ({ navigation }) => {
             <TouchableOpacity
               style={{ padding: 5 }}
               onPress={() => {
-                setLoading(true);
-                instance
-                  .post("/users/addItemToCart", {
-                    variant_id: item.variant_id,
-                    quantity: 1,
-                  })
-                  .then(function (response) {
-                    dispatch(increaseQuantity(item));
-                  })
-                  .catch(function (error) {
-                    console.log(error);
-                    Alert.alert("Thông báo", "Có lỗi xảy ra: " + error.message);
-                  })
-                  .then(function () {
-                    setLoading(false);
-                  });
+                if (item.quantity < stock) {
+                  setLoading(true);
+                  instance
+                    .post("/users/addItemToCart", {
+                      variant_id: item.variant_id,
+                      quantity: 1,
+                    })
+                    .then(function (response) {
+                      dispatch(increaseQuantity(item));
+                    })
+                    .catch(function (error) {
+                      console.log(error);
+                      Alert.alert(
+                        "Thông báo",
+                        "Có lỗi xảy ra: " + error.message
+                      );
+                    })
+                    .then(function () {
+                      setLoading(false);
+                    });
+                }
               }}
             >
               <AntDesign name="plus" size={16} color="black" />
@@ -569,180 +597,7 @@ const Cart = ({ navigation }) => {
           ) : (
             <FlatList
               data={data}
-              renderItem={({ item }) =>
-                renderItem(item)
-                // <TouchableOpacity
-                //   style={{
-                //     flexDirection: "row",
-                //     marginBottom: 20,
-                //   }}
-                //   onPress={() => {
-                //     setSelectedItem(item);
-                //     setModalVisible(true);
-                //     setSelectedTemp({
-                //       variant_id: "",
-                //       color: item.color,
-                //       src: item.src,
-                //       price: item.price,
-                //     });
-                //     setSelectedSize(item.size);
-                //   }}
-                // >
-                //   <Image
-                //     style={{ width: 100, height: 139, marginRight: 10 }}
-                //     uri={item.src}
-                //   />
-
-                //   <View style={{ flexDirection: "column", flex: 1 }}>
-                //     <View style={{ flex: 1 }}>
-                //       <View style={{ flexDirection: "row" }}>
-                //         <Text
-                //           style={[
-                //             styles.text_small,
-                //             {
-                //               fontWeight: "bold",
-                //               fontFamily: "Open_Sans_Bold",
-                //               textTransform: "uppercase",
-                //             },
-                //           ]}
-                //         >
-                //           {item.status}
-                //         </Text>
-                //       </View>
-                //       <Text style={styles.text_normal}>{item.name}</Text>
-                //       <Text style={[styles.text_small, { marginTop: 1 }]}>
-                //         {item.color}
-                //       </Text>
-                //       <Text style={[styles.text_small, { marginTop: 2 }]}>
-                //         Size: {item.size}
-                //       </Text>
-                //       {item.variant.filter(
-                //         (i) => item.variant_id === i.variant_id
-                //       )[0].stock > 9 ? (
-                //         <></>
-                //       ) : (
-                //         <>
-                //           <Text
-                //             style={[
-                //               styles.text_small,
-                //               { marginTop: 5, color: "#fc9803" },
-                //             ]}
-                //           >
-                //             Only{" "}
-                //             {
-                //               item.variant.filter(
-                //                 (i) => item.variant_id === i.variant_id
-                //               )[0].stock
-                //             }{" "}
-                //             Left in Stock
-                //           </Text>
-                //         </>
-                //       )}
-                //     </View>
-                //     <View>
-                //       <NumberFormat
-                //         value={item.old_price}
-                //         displayType={"text"}
-                //         thousandSeparator={true}
-                //         suffix={" đ"}
-                //         renderText={(value, props) => (
-                //           <Text style={styles.text_old_price} {...props}>
-                //             {value}
-                //           </Text>
-                //         )}
-                //       />
-
-                //       <NumberFormat
-                //         value={item.price}
-                //         displayType={"text"}
-                //         thousandSeparator={true}
-                //         suffix={" đ"}
-                //         renderText={(value, props) => (
-                //           <Text style={styles.text_normal} {...props}>
-                //             {value}
-                //           </Text>
-                //         )}
-                //       />
-                //     </View>
-                //   </View>
-                //   <View>
-                //     <View style={{ flex: 1 }}>
-                //       <TouchableOpacity
-                //         style={{ alignSelf: "flex-end", marginRight: -4 }}
-                //         onPress={() => removeItem(item.variant_id)}
-                //       >
-                //         <EvilIcons name="close" size={24} color="black" />
-                //       </TouchableOpacity>
-                //     </View>
-
-                //     <View
-                //       style={{ flexDirection: "row", alignItems: "center" }}
-                //     >
-                //       <TouchableOpacity
-                //         style={{ padding: 5 }}
-                //         onPress={() => {
-                //           setLoading(true);
-                //           instance
-                //             .post("/users/addItemToCart", {
-                //               variant_id: item.variant_id,
-                //               quantity: -1,
-                //             })
-                //             .then(function (response) {
-                //               dispatch(decreaseQuantity(item));
-                //             })
-                //             .catch(function (error) {
-                //               console.log(error);
-                //               Alert.alert(
-                //                 "Thông báo",
-                //                 "Có lỗi xảy ra: " + error.message
-                //               );
-                //             })
-                //             .then(function () {
-                //               setLoading(false);
-                //             });
-                //         }}
-                //       >
-                //         <AntDesign name="minus" size={16} color="black" />
-                //       </TouchableOpacity>
-                //       <Text
-                //         style={[
-                //           styles.text_normal,
-                //           { width: 20, textAlign: "center" },
-                //         ]}
-                //         numberOfLines={1}
-                //       >
-                //         {item.quantity}
-                //       </Text>
-                //       <TouchableOpacity
-                //         style={{ padding: 5 }}
-                //         onPress={() => {
-                //           setLoading(true);
-                //           instance
-                //             .post("/users/addItemToCart", {
-                //               variant_id: item.variant_id,
-                //               quantity: 1,
-                //             })
-                //             .then(function (response) {
-                //               dispatch(increaseQuantity(item));
-                //             })
-                //             .catch(function (error) {
-                //               console.log(error);
-                //               Alert.alert(
-                //                 "Thông báo",
-                //                 "Có lỗi xảy ra: " + error.message
-                //               );
-                //             })
-                //             .then(function () {
-                //               setLoading(false);
-                //             });
-                //         }}
-                //       >
-                //         <AntDesign name="plus" size={16} color="black" />
-                //       </TouchableOpacity>
-                //     </View>
-                //   </View>
-                // </TouchableOpacity>
-              }
+              renderItem={({ item }) => renderItem(item)}
               keyExtractor={(item) => item.variant_id}
               showsVerticalScrollIndicator={false}
             />

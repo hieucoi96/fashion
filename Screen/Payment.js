@@ -178,7 +178,7 @@ const Payment = ({ route, navigation }) => {
                 {value === "cash"
                   ? "Cảm ơn bạn đã sử dụng dịch vụ của chúng tôi. Chúng tôi sẽ xử lý " +
                     "đơn hàng của bạn trong thời gian ngắn nhất."
-                  : "Vui lòng sử dụng phương thức thanh toán khác hoặc thử lại"}
+                  : "Vui lòng sử dụng phương thức thanh toán khác"}
               </Text>
             </View>
           </TouchableOpacity>

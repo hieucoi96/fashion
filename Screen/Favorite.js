@@ -44,7 +44,9 @@ const Item = ({ item, addOrRemoveFav, favorite, onPress }) => {
         </ImageBackground>
 
         <Text style={styles.text_status}>{item.status}</Text>
-        <Text style={styles.text_name}>{item.name}</Text>
+        <Text style={styles.text_name} numberOfLines={2}>
+          {item.name}
+        </Text>
 
         <NumberFormat
           value={item.old_price}
